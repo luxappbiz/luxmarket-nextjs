@@ -127,7 +127,7 @@ export const Header = () => {
                                 {/* Mobile Footer */}
                                 <div className="text-center py-4 border-t border-gray-100">
                                     <p className="text-xs text-gray-500">
-                                        © 2025 LUX. All rights reserved.
+                                        &copy; 2025 LUX. All rights reserved.
                                     </p>
                                 </div>
                             </div>
