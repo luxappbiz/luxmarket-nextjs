@@ -12,7 +12,7 @@ export function HeroSection() {
         <section className="relative py-16 md:py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center overflow-hidden">
 
             <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2340&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat"></div>
+                <div className="absolute inset-0 bg-[url('/images/car-garage-white-cars.avif')] bg-cover bg-center bg-no-repeat"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
             </div>
 

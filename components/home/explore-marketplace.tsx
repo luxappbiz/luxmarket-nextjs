@@ -1,7 +1,6 @@
 // components/home/explore-marketplace.tsx
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Car, Home, Watch, MoreHorizontal, Heart } from 'lucide-react'
 import Image from 'next/image'
 
 interface Product {
@@ -17,22 +16,22 @@ export function ExploreMarketplace() {
     const categories = [
         {
             title: 'Vehicles',
-            icon: Car,
-            description: 'Luxury cars and supercars'
+            image: '/icons/exotic-car.png',
+            description: 'Luxury cars and supercars',
         },
         {
             title: 'Real Estate',
-            icon: Home,
+            image: '/icons/mansion-white.png',
             description: 'Premium properties worldwide'
         },
         {
             title: 'Timepieces',
-            icon: Watch,
+            image: '/icons/timepiece.svg',
             description: 'Luxury watches and collectibles'
         },
         {
             title: '& More',
-            icon: MoreHorizontal,
+            image: '/icons/yacht.png',
             description: 'Discover more categories'
         }
     ]
@@ -112,15 +111,21 @@ export function ExploreMarketplace() {
                 {/* Categories Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
                     {categories.map((category, index) => (
-                        <Card key={index} className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-0 bg-white">
+                        <Card key={index} className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-0 bg-black">
                             <CardContent className="p-8 text-center">
-                                <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-gray-800 transition-colors">
-                                    <category.icon className="w-8 h-8 text-white" />
+                                <div className="aspect-[4/3] relative overflow-hidden mb-4">
+                                    <Image
+                                        src={category.image}
+                                        alt={category.title}
+                                        fill
+                                        className="object-contain group-hover:scale-105 transition-transform duration-300"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                                    />
                                 </div>
-                                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                                <h3 className="text-xl font-semibold text-white mb-2">
                                     {category.title}
                                 </h3>
-                                <p className="text-gray-600 text-sm">
+                                <p className="text-gray-300 text-sm">
                                     {category.description}
                                 </p>
                             </CardContent>
