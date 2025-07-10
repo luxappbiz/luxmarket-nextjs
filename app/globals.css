@@ -4,7 +4,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Set Roboto as the default sans font, Baskervville as serif */
+  --font-sans: var(--font-roboto), "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: var(--font-baskervville), "Baskervville", Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
   
   --radius: 0.5rem;
@@ -106,13 +108,20 @@
     @apply border-border;
   }
   
+  /* Roboto as default for everything */
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
+  /* Headings use Roboto by default, unless font-serif is specified */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight;
+    @apply font-sans font-semibold tracking-tight;
+  }
+  
+  /* All text elements use Roboto by default */
+  p, span, div, a, button, input, textarea, label, li, td, th {
+    @apply font-sans;
   }
   
   /* Smooth scrolling */
@@ -160,9 +169,9 @@
     max-width: 1200px;
   }
   
-  /* Custom button variants */
+  /* Custom button variants - all use Roboto */
   .btn {
-    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 font-sans;
   }
   
   .btn-primary {
@@ -186,15 +195,29 @@
     @apply rounded-lg border bg-card text-card-foreground shadow-sm;
   }
   
-  /* Input component */
+  /* Input component - uses Roboto */
   .input {
-    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 font-sans;
   }
   
-  /* Label component */
+  /* Label component - uses Roboto */
   .label {
-    @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+    @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-sans;
   }
+}
+
+/* Typography utilities for explicit font control */
+.font-serif {
+  font-family: var(--font-baskervville), "Baskervville", Georgia, "Times New Roman", serif !important;
+}
+
+.font-sans {
+  font-family: var(--font-roboto), "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+/* Luxury heading utility - combines Baskervville with elegant styling */
+.font-heading {
+  @apply font-serif font-normal tracking-wide;
 }
 
 /* Custom animations */
@@ -283,4 +306,3 @@
     scroll-behavior: auto;
   }
 }
-

@@ -31,7 +31,7 @@ export const Header = () => {
                                 priority
                             />
                         </div>
-                        <span className="text-2xl font-bold text-gray-900 tracking-tight">LUX</span>
+                        <span className="text-2xl font-bold text-gray-900 tracking-tight font-serif">LUX</span>
                     </Link>
 
                     {/* Desktop Navigation */}

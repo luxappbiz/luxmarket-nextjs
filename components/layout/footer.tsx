@@ -19,7 +19,7 @@ export function Footer() {
                                     className="object-contain"
                                 />
                             </div>
-                            <span className="text-xl font-bold">LUX</span>
+                            <span className="text-xl font-bold font-serif">LUX</span>
                         </div>
                         <p className="text-gray-400 text-sm mb-6">
                             A membership marketplace that connects buyers and sellers.
