@@ -1,7 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "../ui/button";
-import { Smartphone } from "lucide-react";
 
 export function Footer() {
     return (
@@ -30,10 +28,13 @@ export function Footer() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <Button variant="outline" size="sm" className="bg-black border-gray-700 text-white hover:bg-gray-800 transition-all duration-200 hover:scale-105">
-                                    <Smartphone className="w-4 h-4 mr-2" />
-                                    Download on the App Store
-                                </Button>
+                                <Image
+                                    src="/images/app-store.svg"
+                                    alt="Download on the App Store"
+                                    width={140}
+                                    height={48}
+                                    className="h-12 w-auto"
+                                />
                             </Link>
                         </div>
                     </div>
