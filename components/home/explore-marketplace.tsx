@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface Product {
     id: string
@@ -181,13 +182,12 @@ export function ExploreMarketplace() {
                         ))}
                     </div>
                 </div>
-
                 <div className="text-center">
-                    <Button size="lg" variant="outline" className="border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white">
-                        Explore Marketplace
+                    <Button size="lg" variant="outline" className="border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white" asChild>
+                        <Link href="/explore">Explore Marketplace</Link>
                     </Button>
                 </div>
             </div>
         </section>
-    )
+    );
 }
