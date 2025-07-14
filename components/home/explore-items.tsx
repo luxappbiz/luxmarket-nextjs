@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export function ExploreItems() {
     return (
@@ -22,11 +23,11 @@ export function ExploreItems() {
                         is hand-selected and verified by members who share your passion for exceptional quality and craftsmanship.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4">
-                        <Button size="lg" className="bg-white text-black hover:bg-gray-200">
-                            Browse Collection
+                        <Button size="lg" className="bg-white text-black hover:bg-gray-200" asChild>
+                            <Link href="/explore">Browse Collection</Link>
                         </Button>
-                        <Button size="lg" variant="outline" className="border-white bg-ray-800 text-white hover:bg-white hover:text-black">
-                            Become a Member
+                        <Button size="lg" variant="outline" className="border-white bg-ray-800 text-white hover:bg-white hover:text-black" asChild>
+                            <Link href="/join">Become a Member</Link>
                         </Button>
                     </div>
                 </div>
