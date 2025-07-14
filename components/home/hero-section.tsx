@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Smartphone } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -113,11 +112,15 @@ export function HeroSection() {
                                     href="https://apps.apple.com/us/app/my-lux-market/id6738446545"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    className="inline-block transition-transform duration-200 hover:scale-105"
                                 >
-                                    <Button variant="outline" className="bg-black/50 border-gray-400 text-white hover:bg-black/70 shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-105">
-                                        <Smartphone className="w-4 h-4 mr-2" />
-                                        Download on the App Store
-                                    </Button>
+                                    <Image
+                                        src="/images/app-store.svg"
+                                        alt="Download on the App Store"
+                                        width={140}
+                                        height={48}
+                                        className="h-12 w-auto"
+                                    />
                                 </Link>
                             </div>
                         </div>
