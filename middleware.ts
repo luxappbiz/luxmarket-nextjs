@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
   const authPages = ['/login', '/join', '/lost-pass'];
   
   // Define protected pages that require authentication
-  const protectedPages = ['/account', '/membership','/explore'];
+  const protectedPages = ['/account', '/membership','/explore',"/vehicles","/real-estate","/watches"];
   
   // Check if current path is an auth page
   const isAuthPage = authPages.some(page => pathname.startsWith(page));
