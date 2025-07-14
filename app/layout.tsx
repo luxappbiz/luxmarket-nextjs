@@ -32,11 +32,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${baskervville.variable} ${roboto.variable} font-sans`}>
-        <Header />
         <main className="min-h-screen">
           {children}
         </main>
-        <Footer />
       </body>
     </html>
   )
