@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -11,32 +11,17 @@ import {
     Watch,
     Sparkles,
     Grid3X3,
-    List
+    List,
+    Loader2
 } from 'lucide-react';
 import ProductItem from '@/components/products/ProductItem';
-
-interface Product {
-    id: string;
-    title: string;
-    price: string;
-    originalPrice?: string;
-    image: string;
-    category: 'vehicles' | 'real-estate' | 'watches' | 'other';
-    location?: string;
-    date: string;
-    featured?: boolean;
-    status?: 'available' | 'sold' | 'pending';
-    seller: {
-        name: string;
-        verified: boolean;
-    };
-}
+import { productsService, Product } from '@/lib/products-api';
 
 const sortOptions = [
-    { value: 'newest', label: 'Newest First' },
-    { value: 'price-low', label: 'Price: Low to High' },
-    { value: 'price-high', label: 'Price: High to Low' },
-    { value: 'popular', label: 'Most Popular' },
+    { value: 'date', label: 'Newest First' },
+    { value: 'price', label: 'Price: Low to High' },
+    { value: 'price-desc', label: 'Price: High to Low' },
+    { value: 'title', label: 'Alphabetical' },
 ];
 
 const priceRanges = [
@@ -51,177 +36,74 @@ const priceRanges = [
 export default function ExplorePage() {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortBy, setSortBy] = useState('newest');
+    const [sortBy, setSortBy] = useState('date');
     const [priceRange, setPriceRange] = useState('all');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [showFilters, setShowFilters] = useState(false);
 
-    // Sample products data - using local image paths
-    const products: Product[] = [
-        {
-            id: '1',
-            title: '2016 Lamborghini Aventador',
-            price: '$475,996',
-            image: '/images/cars/lamborghini-aventador-2016.jpeg',
-            category: 'vehicles',
-            location: 'Miami, FL',
-            date: '2 days ago',
-            featured: true,
-            status: 'available',
-            seller: { name: 'Luxury Motors', verified: true }
-        },
-        {
-            id: '2',
-            title: 'Modern Waterfront Villa',
-            price: '$3,750,000',
-            image: '/images/real-estate/waterfront-villa.jpeg',
-            category: 'real-estate',
-            location: 'Malibu, CA',
-            date: '5 days ago',
-            status: 'available',
-            seller: { name: 'Elite Properties', verified: true }
-        },
-        {
-            id: '3',
-            title: 'Patek Philippe Nautilus 5711',
-            price: '$175,000',
-            originalPrice: '$195,000',
-            image: '/images/watches/patek-philippe-nautilus.jpeg',
-            category: 'watches',
-            location: 'New York, NY',
-            date: '1 week ago',
-            status: 'available',
-            seller: { name: 'Timepiece Gallery', verified: true }
-        },
-        {
-            id: '4',
-            title: 'Lamborghini Aventador Purple',
-            price: '$285,000',
-            image: '/images/cars/lamborghini-aventador-purple.jpg',
-            category: 'vehicles',
-            location: 'Los Angeles, CA',
-            date: '3 days ago',
-            status: 'pending',
-            seller: { name: 'Exotic Cars LA', verified: true }
-        },
-        {
-            id: '5',
-            title: 'Rolex Daytona Gold',
-            price: '$85,000',
-            image: '/images/watches/rolex-daytona-gold.jpg',
-            category: 'watches',
-            location: 'Chicago, IL',
-            date: '4 days ago',
-            status: 'available',
-            seller: { name: 'Watch Collectors', verified: false }
-        },
-        {
-            id: '6',
-            title: 'Penthouse Suite Downtown',
-            price: '$2,100,000',
-            image: '/images/real-estate/penthouse-suite.jpg',
-            category: 'real-estate',
-            location: 'Manhattan, NY',
-            date: '1 day ago',
-            featured: true,
-            status: 'available',
-            seller: { name: 'Manhattan Realty', verified: true }
-        },
-        {
-            id: '7',
-            title: '2022 Pagani Huayra',
-            price: '$2,750,000',
-            image: '/images/cars/pagani-huayra-2022.webp',
-            category: 'vehicles',
-            location: 'Dallas, TX',
-            date: '6 days ago',
-            status: 'available',
-            seller: { name: 'Pagani Dallas', verified: true }
-        },
-        {
-            id: '8',
-            title: 'Luxury Yacht Marina Berth',
-            price: '$1,450,000',
-            image: '/images/real-estate/yacht-marina.jpg',
-            category: 'real-estate',
-            location: 'Newport Beach, CA',
-            date: '1 day ago',
-            status: 'available',
-            seller: { name: 'Marina Properties', verified: true }
-        },
-        {
-            id: '9',
-            title: 'Audemars Piguet Royal Oak',
-            price: '$95,000',
-            image: '/images/watches/audemars-piguet-royal-oak.webp',
-            category: 'watches',
-            location: 'Las Vegas, NV',
-            date: '2 days ago',
-            status: 'sold',
-            seller: { name: 'Vegas Timepieces', verified: true }
-        },
-        {
-            id: '10',
-            title: 'Bugatti Chiron Super Sport',
-            price: '$1,096,470',
-            image: '/images/cars/bugatti-chiron.jpg',
-            category: 'vehicles',
-            location: 'Phoenix, AZ',
-            date: '4 days ago',
-            status: 'available',
-            seller: { name: 'Exotic Motors', verified: true }
-        },
-        {
-            id: '11',
-            title: '1969 Pontiac GTO Judge',
-            price: '$69,000',
-            originalPrice: '$77,000',
-            image: '/images/cars/pontiac-gto-1969.jpg',
-            category: 'vehicles',
-            location: 'Detroit, MI',
-            date: '1 week ago',
-            status: 'sold',
-            seller: { name: 'Classic Cars Detroit', verified: true }
-        },
-        {
-            id: '12',
-            title: 'Koenigsegg CCGT 2008',
-            price: '$3,600,000',
-            image: '/images/cars/koenigsegg-ccgt.jpg',
-            category: 'vehicles',
-            location: 'Beverly Hills, CA',
-            date: '3 days ago',
-            featured: true,
-            status: 'available',
-            seller: { name: 'Supercar Gallery', verified: true }
-        },
-        {
-            id: '13',
-            title: '2012 Mercedes-Benz G 65 AMG',
-            price: '$100,000',
-            image: '/images/cars/mercedes-g65-amg.jpg',
-            category: 'vehicles',
-            location: 'Atlanta, GA',
-            date: '5 days ago',
-            status: 'available',
-            seller: { name: 'AMG Specialist', verified: true }
-        },
-        {
-            id: '14',
-            title: 'Pontiac Judge 1969',
-            price: '$50,000',
-            image: '/images/cars/pontiac-judge-1969.jpg',
-            category: 'vehicles',
-            location: 'Nashville, TN',
-            date: '2 days ago',
-            status: 'available',
-            seller: { name: 'Muscle Car Classics', verified: true }
-        }
-    ];
+    // API state - Store ALL products and filter client-side
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [totalCount, setTotalCount] = useState(0);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [hasLoadedAll, setHasLoadedAll] = useState(false);
 
-    // Filter products based on selected category and search
-    const filteredProducts = useMemo(() => {
-        let filtered = products;
+    // Load all products initially (without category filter)
+    const loadAllProducts = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            // Load all products without category filter
+            const response = await productsService.getProducts({
+                page: 1,
+                per_page: 100, // Load more products initially
+                search: searchQuery.trim() || undefined,
+                orderby: 'date',
+                order: 'desc',
+            });
+
+            setAllProducts(response.products);
+            setTotalCount(response.totalCount);
+            setHasLoadedAll(response.products.length >= response.totalCount);
+        } catch (err) {
+            setError('Failed to load products. Please try again.');
+            console.error('Error loading products:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Load more products
+    const loadMoreProducts = async () => {
+        if (hasLoadedAll || loadingMore) return;
+
+        try {
+            setLoadingMore(true);
+            const currentPage = Math.ceil(allProducts.length / 20) + 1;
+
+            const response = await productsService.getProducts({
+                page: currentPage,
+                per_page: 20,
+                search: searchQuery.trim() || undefined,
+                orderby: 'date',
+                order: 'desc',
+            });
+
+            setAllProducts(prev => [...prev, ...response.products]);
+            //@ts-ignore
+            setHasLoadedAll(prev => prev.concat(response.products).length >= response.totalCount);
+        } catch (err) {
+            console.error('Error loading more products:', err);
+        } finally {
+            setLoadingMore(false);
+        }
+    };
+
+    // Filter and sort products client-side
+    const filteredAndSortedProducts = useMemo(() => {
+        let filtered = [...allProducts];
 
         // Filter by category
         if (selectedCategory !== 'all') {
@@ -230,80 +112,82 @@ export default function ExplorePage() {
 
         // Filter by search query
         if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase().trim();
             filtered = filtered.filter(product =>
-                product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                product.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                product.seller.name.toLowerCase().includes(searchQuery.toLowerCase())
+                product.title.toLowerCase().includes(query) ||
+                product.category.toLowerCase().includes(query)
             );
         }
 
-        // Sort products
-        switch (sortBy) {
-            case 'price-low':
-                filtered.sort((a, b) => {
-                    const priceA = parseInt(a.price.replace(/[$,]/g, ''));
-                    const priceB = parseInt(b.price.replace(/[$,]/g, ''));
-                    return priceA - priceB;
-                });
-                break;
-            case 'price-high':
-                filtered.sort((a, b) => {
-                    const priceA = parseInt(a.price.replace(/[$,]/g, ''));
-                    const priceB = parseInt(b.price.replace(/[$,]/g, ''));
-                    return priceB - priceA;
-                });
-                break;
-            case 'newest':
-            default:
-                // Keep original order for newest
-                break;
+        // Filter by price range
+        if (priceRange !== 'all') {
+            filtered = filtered.filter(product => {
+                const price = parseInt(product.price.replace(/[$,]/g, ''));
+
+                switch (priceRange) {
+                    case '0-50k': return price < 50000;
+                    case '50k-100k': return price >= 50000 && price <= 100000;
+                    case '100k-500k': return price >= 100000 && price <= 500000;
+                    case '500k-1m': return price >= 500000 && price <= 1000000;
+                    case '1m+': return price > 1000000;
+                    default: return true;
+                }
+            });
         }
 
-        return filtered;
-    }, [products, selectedCategory, searchQuery, sortBy]);
+        // Sort products
+        filtered.sort((a, b) => {
+            switch (sortBy) {
+                case 'price':
+                    return parseInt(a.price.replace(/[$,]/g, '')) - parseInt(b.price.replace(/[$,]/g, ''));
+                case 'price-desc':
+                    return parseInt(b.price.replace(/[$,]/g, '')) - parseInt(a.price.replace(/[$,]/g, ''));
+                case 'title':
+                    return a.title.localeCompare(b.title);
+                case 'date':
+                default:
+                    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+            }
+        });
 
-    // Calculate dynamic counts for each category
+        return filtered;
+    }, [allProducts, selectedCategory, searchQuery, priceRange, sortBy]);
+
+    // Calculate category counts from all products
     const categories = useMemo(() => {
-        const vehicleCount = products.filter(p => p.category === 'vehicles').length;
-        const realEstateCount = products.filter(p => p.category === 'real-estate').length;
-        const watchCount = products.filter(p => p.category === 'watches').length;
-        const totalCount = products.length;
+        const vehicleCount = allProducts.filter(p => p.category === 'vehicles').length;
+        const realEstateCount = allProducts.filter(p => p.category === 'real-estate').length;
+        const watchCount = allProducts.filter(p => p.category === 'watches').length;
+        const otherCount = allProducts.filter(p => p.category === 'other').length;
 
         return [
-            { id: 'all', label: 'All Items', icon: Sparkles, count: totalCount },
+            { id: 'all', label: 'All Items', icon: Sparkles, count: filteredAndSortedProducts.length },
             { id: 'vehicles', label: 'Vehicles', icon: Car, count: vehicleCount },
             { id: 'real-estate', label: 'Real Estate', icon: Home, count: realEstateCount },
             { id: 'watches', label: 'Watches', icon: Watch, count: watchCount },
         ];
-    }, [products]);
+    }, [allProducts, filteredAndSortedProducts.length]);
 
-    const getCategoryIcon = (category: string) => {
-        switch (category) {
-            case 'vehicles': return <Car className="h-3 w-3" />;
-            case 'real-estate': return <Home className="h-3 w-3" />;
-            case 'watches': return <Watch className="h-3 w-3" />;
-            default: return <Sparkles className="h-3 w-3" />;
-        }
-    };
-
-    const getStatusColor = (status?: string) => {
-        switch (status) {
-            case 'sold': return 'bg-red-600';
-            case 'pending': return 'bg-yellow-600';
-            default: return 'bg-green-600';
-        }
-    };
+    // Load products on component mount and when search changes
+    useEffect(() => {
+        loadAllProducts();
+    }, [searchQuery]);
 
     const handleCategoryChange = (categoryId: string) => {
         setSelectedCategory(categoryId);
-        // Clear search when changing categories for better UX
-        setSearchQuery('');
+        // No need to reload - filtering happens client-side
     };
 
     const handleSearch = () => {
-        // Search functionality is handled by the useMemo hook
-        // This function can be used for additional search logic if needed
-        console.log('Searching for:', searchQuery);
+        // Search will trigger useEffect to reload products
+        loadAllProducts();
+    };
+
+    const handleClearFilters = () => {
+        setSortBy('date');
+        setPriceRange('all');
+        setSearchQuery('');
+        setSelectedCategory('all');
     };
 
     return (
@@ -316,7 +200,7 @@ export default function ExplorePage() {
                             Explore Luxury Collection
                         </h1>
                         <p className="text-lg text-gray-300 mb-8">
-                            Discover over {products.length} verified luxury items from trusted sellers worldwide
+                            Discover over {totalCount.toLocaleString()} verified luxury items from trusted sellers worldwide
                         </p>
 
                         {/* Search Bar */}
@@ -328,38 +212,55 @@ export default function ExplorePage() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                                className="w-full pl-12 pr-4 py-3 h-14 text-gray-900 bg-white rounded-lg border-0 shadow-lg"
+                                className="w-full pl-12 pr-4 py-3 h-14 text-gray-900 bg-white rounded-lg border-0 shadow-lg focus:shadow-2xl transition-shadow duration-300"
                             />
                             <Button
                                 onClick={handleSearch}
-                                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black hover:bg-gray-800"
+                                disabled={loading}
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black hover:bg-gray-800 hover:scale-105 transition-all duration-200"
                             >
-                                Search
+                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
                             </Button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Categories Bar */}
+            {/* Categories Bar - Enhanced Hover Effects */}
             <section className="bg-white border-b sticky top-16 z-40 shadow-sm">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between py-4">
-                        <div className="flex items-center space-x-6 overflow-x-auto">
+                        <div className="flex items-center space-x-1 overflow-x-auto">
                             {categories.map((category) => {
                                 const Icon = category.icon;
+                                const isActive = selectedCategory === category.id;
                                 return (
                                     <button
                                         key={category.id}
                                         onClick={() => handleCategoryChange(category.id)}
-                                        className={`flex items-center space-x-2 pb-2 border-b-2 transition-all whitespace-nowrap ${selectedCategory === category.id
+                                        disabled={loading && !loadingMore}
+                                        className={`group flex items-center space-x-2 pb-2 border-b-2 transition-colors duration-200 whitespace-nowrap cursor-pointer ${isActive
                                             ? 'border-black text-black'
-                                            : 'border-transparent text-gray-600 hover:text-black'
-                                            }`}
+                                            : 'border-transparent text-gray-600 hover:text-black hover:border-gray-300'
+                                            } ${loading && !loadingMore ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
-                                        <Icon className="h-4 w-4" />
-                                        <span className="font-medium">{category.label}</span>
-                                        <span className="text-sm text-gray-500">({category.count})</span>
+                                        <Icon className={`h-4 w-4 ${isActive ? 'text-black' : 'text-gray-500 group-hover:text-black'
+                                            }`} />
+                                        <span className={`font-medium ${isActive ? 'text-black' : 'group-hover:font-semibold'
+                                            }`}>
+                                            {category.label}
+                                        </span>
+                                        <span className={`text-sm ${isActive ? 'text-gray-700' : 'text-gray-500 group-hover:text-gray-700'
+                                            }`}>
+                                            ({category.count})
+                                        </span>
+
+                                        {/* Simple loading indicator for active category */}
+                                        {isActive && loading && !loadingMore && (
+                                            <div className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-black/20">
+                                                <div className="h-full bg-black animate-pulse" />
+                                            </div>
+                                        )}
                                     </button>
                                 );
                             })}
@@ -370,7 +271,7 @@ export default function ExplorePage() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-                                className="hidden md:flex"
+                                className="hidden md:flex hover:scale-105 transition-transform duration-200"
                             >
                                 {viewMode === 'grid' ? <List className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
                             </Button>
@@ -378,6 +279,7 @@ export default function ExplorePage() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setShowFilters(!showFilters)}
+                                className="hover:scale-105 transition-transform duration-200"
                             >
                                 <Filter className="h-4 w-4 mr-2" />
                                 Filters
@@ -417,11 +319,7 @@ export default function ExplorePage() {
                                 ))}
                             </select>
 
-                            <Button variant="ghost" size="sm" onClick={() => {
-                                setSortBy('newest');
-                                setPriceRange('all');
-                                setSearchQuery('');
-                            }}>
+                            <Button variant="ghost" size="sm" onClick={handleClearFilters}>
                                 Clear Filters
                             </Button>
                         </div>
@@ -434,11 +332,11 @@ export default function ExplorePage() {
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between mb-6">
                         <p className="text-gray-600">
-                            Showing <span className="font-medium text-gray-900">{filteredProducts.length}</span>
+                            Showing <span className="font-medium text-gray-900">{filteredAndSortedProducts.length}</span>
                             {selectedCategory !== 'all' && (
                                 <span> {selectedCategory.replace('-', ' ')} </span>
                             )}
-                            {filteredProducts.length === 1 ? 'result' : 'results'}
+                            {filteredAndSortedProducts.length === 1 ? 'result' : 'results'}
                             {searchQuery && (
                                 <span> for "{searchQuery}"</span>
                             )}
@@ -455,7 +353,26 @@ export default function ExplorePage() {
                         )}
                     </div>
 
-                    {filteredProducts.length === 0 ? (
+                    {/* Loading State */}
+                    {loading && allProducts.length === 0 && (
+                        <div className="flex justify-center items-center py-12">
+                            <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+                            <span className="ml-2 text-gray-500">Loading products...</span>
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {error && (
+                        <div className="text-center py-12">
+                            <div className="text-red-500 text-lg mb-4">{error}</div>
+                            <Button onClick={() => loadAllProducts()}>
+                                Try Again
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* No Results */}
+                    {!loading && !error && filteredAndSortedProducts.length === 0 && (
                         <div className="text-center py-12">
                             <div className="text-gray-500 text-lg mb-4">No items found</div>
                             <p className="text-gray-400 mb-4">
@@ -466,34 +383,47 @@ export default function ExplorePage() {
                             </p>
                             <Button
                                 variant="outline"
-                                onClick={() => {
-                                    setSearchQuery('');
-                                    setSelectedCategory('all');
-                                }}
+                                onClick={handleClearFilters}
                             >
                                 Clear Search & Filters
                             </Button>
                         </div>
-                    ) : (
+                    )}
+
+                    {/* Products Grid */}
+                    {!loading && !error && filteredAndSortedProducts.length > 0 && (
                         <div className={`grid gap-6 ${viewMode === 'grid'
                             ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                             : 'grid-cols-1'
                             }`}>
-                            {filteredProducts.map((product) => (
-                                <ProductItem product={product}/>
+                            {filteredAndSortedProducts.map((product) => (
+                                <ProductItem
+                                    key={product.id}
+                                    product={product}
+                                    viewMode={viewMode}
+                                />
                             ))}
                         </div>
                     )}
 
-                    {/* Load More - Only show if there are results */}
-                    {filteredProducts.length > 0 && (
+                    {/* Load More */}
+                    {!loading && !error && filteredAndSortedProducts.length > 0 && !hasLoadedAll && (
                         <div className="mt-12 text-center">
                             <Button
                                 variant="outline"
                                 size="lg"
+                                onClick={loadMoreProducts}
+                                disabled={loadingMore}
                                 className="border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
                             >
-                                Load More Items
+                                {loadingMore ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Loading...
+                                    </>
+                                ) : (
+                                    'Load More Items'
+                                )}
                             </Button>
                         </div>
                     )}

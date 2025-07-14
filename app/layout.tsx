@@ -2,6 +2,7 @@
 import type { Metadata } from 'next'
 import { Inter, Baskervville, Roboto } from 'next/font/google'
 import './globals.css'
+import { AuthProvider } from '@/lib/auth-context'
 
 const inter = Inter({ subsets: ['latin'] })
 const baskervville = Baskervville({
@@ -32,9 +33,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${baskervville.variable} ${roboto.variable} font-sans`}>
-        <main className="min-h-screen">
-          {children}
-        </main>
+        <AuthProvider>
+          <main className="min-h-screen">
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   )
