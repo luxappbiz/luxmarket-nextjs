@@ -20,37 +20,36 @@ export const Header = () => {
     ];
 
     return (
-        <>
-            <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 items-center justify-between">
-                        {/* Logo */}
-                        <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-                            <div className="relative w-10 h-10">
-                                <Image
-                                    src="/images/LUX-Logo.png"
-                                    alt="LUX Logo"
-                                    fill
-                                    className="object-contain"
-                                    priority
-                                />
-                            </div>
-                            <span className="text-2xl font-bold text-gray-900 tracking-tight">LUX</span>
-                        </Link>
+        <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex h-16 items-center justify-between">
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                        <div className="relative w-10 h-10">
+                            <Image
+                                src="/images/LUX-Logo.png"
+                                alt="LUX Logo"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
+                        </div>
+                        <span className="text-2xl font-bold text-gray-900 tracking-tight font-serif">LUX</span>
+                    </Link>
 
-                        {/* Desktop Navigation */}
-                        <nav className="hidden md:flex items-center space-x-8">
-                            {navigation.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    href={item.href}
-                                    className="text-sm font-semibold text-gray-700 hover:text-black transition-all duration-200 hover:scale-105 relative group"
-                                >
-                                    {item.name}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black transition-all duration-200 group-hover:w-full"></span>
-                                </Link>
-                            ))}
-                        </nav>
+                    {/* Desktop Navigation */}
+                    <nav className="hidden md:flex items-center space-x-8">
+                        {navigation.map((item) => (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                className="text-sm font-semibold text-gray-700 hover:text-black transition-all duration-200 hover:scale-105 relative group"
+                            >
+                                {item.name}
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black transition-all duration-200 group-hover:w-full"></span>
+                            </Link>
+                        ))}
+                    </nav>
 
                         {/* Desktop CTA */}
                         <div className="hidden md:flex items-center space-x-3">
