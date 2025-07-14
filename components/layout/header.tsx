@@ -24,6 +24,8 @@ export const Header = () => {
             <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center justify-between">
+
+
                         {/* Logo */}
                         <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
                             <div className="relative w-10 h-10">
@@ -35,7 +37,7 @@ export const Header = () => {
                                     priority
                                 />
                             </div>
-                            <span className="text-2xl font-bold text-gray-900 tracking-tight">LUX</span>
+                            <span className="text-2xl font-bold text-gray-900 tracking-tight font-serif">LUX</span>
                         </Link>
 
                         {/* Desktop Navigation */}
@@ -137,10 +139,10 @@ export const Header = () => {
                                 </div>
                             </SheetContent>
                         </Sheet>
+
                     </div>
                 </div>
             </header>
-
             {/* Login Dialog */}
             <LoginDialog
                 isOpen={showLoginDialog}

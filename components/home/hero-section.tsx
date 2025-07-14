@@ -33,7 +33,7 @@ export function HeroSection() {
                                                 className="object-contain"
                                             />
                                         </div>
-                                        <h3 className="font-semibold text-gray-900">LUX</h3>
+                                        <h3 className="font-semibold text-gray-900  font-serif">LUX</h3>
                                     </div>
 
                                     <div className="space-y-4 flex-1">
@@ -80,7 +80,7 @@ export function HeroSection() {
                     {/* Right Side - Content */}
                     <div className="text-center lg:text-left">
                         <div className="space-y-6">
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg font-serif ">
                                 LUX
                             </h1>
                             <p className="text-lg md:text-xl text-gray-200 max-w-md mx-auto lg:mx-0 drop-shadow-md">

@@ -4,7 +4,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Use the exact CSS variables from your layout.tsx */
+  --font-sans: var(--font-roboto);
+  --font-serif: var(--font-baskervville);
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
   
   --radius: 0.5rem;
@@ -107,12 +109,12 @@
   }
   
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight;
+    @apply font-sans font-semibold tracking-tight;
   }
   
   /* Smooth scrolling */
@@ -195,6 +197,15 @@
   .label {
     @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
   }
+}
+
+/* Typography utilities - directly use CSS variables */
+.font-serif {
+  font-family: var(--font-baskervville) !important;
+}
+
+.font-sans {
+  font-family: var(--font-roboto) !important;
 }
 
 /* Custom animations */
@@ -283,4 +294,3 @@
     scroll-behavior: auto;
   }
 }
-
