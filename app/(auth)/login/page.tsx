@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Check, Loader2, Mail, Lock } from 'lucide-react';
-import { authApi, tokenStorage } from '@/lib/api';
+import { authApi, authUtils } from '@/lib/api';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -36,21 +36,20 @@ export default function LoginPage() {
             const response = await authApi.login(formData.login, formData.password);
 
             if (response.success) {
-                // Store token and user data
-                tokenStorage.setToken(response.token);
-                tokenStorage.setUser(response.user);
-
-                // Store application password if needed
-                if (response.application_password) {
-                    localStorage.setItem('lux_app_password', response.application_password);
-                }
-
+                // Store auth data using the new utility
+                authUtils.setAuthData(
+                    response.token,
+                    response.user,
+                    formData.rememberMe,
+                    response.application_password
+                );
+                router.push('/account');
                 // Redirect based on membership status
-                if (response.user.has_active_membership) {
-                    router.push('/account');
-                } else {
-                    router.push('/membership'); // Redirect to membership page if no active membership
-                }
+                // if (response.user.has_active_membership) {
+                //     router.push('/account');
+                // } else {
+                //     router.push('/membership'); // Redirect to membership page if no active membership
+                // }
             } else {
                 setError(response.error || 'Login failed');
             }
@@ -112,7 +111,7 @@ export default function LoginPage() {
                                         </div>
                                     )}
 
-                                    <div className="space-y-4">
+                                    <form onSubmit={handleSubmit} className="space-y-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="login">Email or Username</Label>
                                             <div className="relative">
@@ -187,7 +186,7 @@ export default function LoginPage() {
                                         </div>
 
                                         <Button
-                                            onClick={handleSubmit}
+                                            type="submit"
                                             className="w-full h-12 bg-black hover:bg-gray-900 text-white font-medium"
                                             disabled={isLoading}
                                         >
@@ -207,7 +206,7 @@ export default function LoginPage() {
                                                 Create an account
                                             </Link>
                                         </p>
-                                    </div>
+                                    </form>
                                 </div>
 
                                 {/* Info Section */}

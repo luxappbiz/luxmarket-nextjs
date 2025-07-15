@@ -6,9 +6,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 import Link from 'next/link';
-import { authApi, tokenStorage } from '@/lib/api';
+import { authApi, authUtils } from '@/lib/api';
 
 interface LoginDialogProps {
     isOpen: boolean;
@@ -22,7 +22,8 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     const [error, setError] = useState('');
     const [formData, setFormData] = useState({
         login: '',
-        password: ''
+        password: '',
+        rememberMe: false
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -40,24 +41,28 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
             const response = await authApi.login(formData.login, formData.password);
 
             if (response.success) {
-                // Store token and user data
-                tokenStorage.setToken(response.token);
-                tokenStorage.setUser(response.user);
-
-                // Store application password if needed
-                if (response.application_password) {
-                    localStorage.setItem('lux_app_password', response.application_password);
-                }
+                // Use the new auth utility to store auth data
+                authUtils.setAuthData(
+                    response.token,
+                    response.user,
+                    formData.rememberMe,
+                    response.application_password
+                );
 
                 // Close dialog first
                 onClose();
 
+                // Clear form
+                setFormData({ login: '', password: '', rememberMe: false });
+
+                router.push('/account');
+
                 // Then redirect based on membership status
-                if (response.user.has_active_membership) {
-                    router.push('/account');
-                } else {
-                    router.push('/membership'); // Redirect to membership page if no active membership
-                }
+                // if (response.user.has_active_membership) {
+                //     router.push('/account');
+                // } else {
+                //     router.push('/membership'); // Redirect to membership page if no active membership
+                // }
             } else {
                 setError(response.error || 'Login failed');
             }
@@ -69,10 +74,10 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: type === 'checkbox' ? checked : value
         }));
         // Clear error when user starts typing
         if (error) setError('');
@@ -81,11 +86,11 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     // Reset form when dialog closes
     const handleOpenChange = (open: boolean) => {
         if (!open) {
-            setFormData({ login: '', password: '' });
+            setFormData({ login: '', password: '', rememberMe: false });
             setError('');
             setShowPassword(false);
+            onClose();
         }
-        onClose();
     };
 
     return (
@@ -93,6 +98,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold text-center">Welcome Back</DialogTitle>
+                    <p className="text-center text-gray-600 text-sm">Log in to your LUX account</p>
                 </DialogHeader>
 
                 <div className="space-y-4 mt-4">
@@ -102,90 +108,110 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                         </div>
                     )}
 
-                    <div className="space-y-2">
-                        <Label htmlFor="dialog-login">Username or Email</Label>
-                        <Input
-                            id="dialog-login"
-                            name="login"
-                            type="text"
-                            placeholder="Enter your username or email"
-                            value={formData.login}
-                            onChange={handleChange}
-                            disabled={isLoading}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="dialog-password">Password</Label>
-                        <div className="relative">
-                            <Input
-                                id="dialog-password"
-                                name="password"
-                                type={showPassword ? 'text' : 'password'}
-                                placeholder="Enter your password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="pr-10"
-                                disabled={isLoading}
-                                required
-                            />
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                onClick={() => setShowPassword(!showPassword)}
-                                disabled={isLoading}
-                            >
-                                {showPassword ? (
-                                    <EyeOff className="h-4 w-4 text-gray-500" />
-                                ) : (
-                                    <Eye className="h-4 w-4 text-gray-500" />
-                                )}
-                                <span className="sr-only">
-                                    {showPassword ? 'Hide password' : 'Show password'}
-                                </span>
-                            </Button>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="dialog-login">Email or Username</Label>
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                <Input
+                                    id="dialog-login"
+                                    name="login"
+                                    type="text"
+                                    placeholder="john@example.com or johndoe"
+                                    value={formData.login}
+                                    onChange={handleChange}
+                                    className="pl-10"
+                                    disabled={isLoading}
+                                    required
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="flex items-center justify-between text-sm">
-                        <Link
-                            href="/lost-pass"
-                            className="text-gray-600 hover:text-black transition-colors"
-                            onClick={() => onClose()}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="dialog-password">Password</Label>
+                                <Link
+                                    href="/lost-pass"
+                                    className="text-xs text-gray-600 hover:text-black transition-colors"
+                                    onClick={() => onClose()}
+                                >
+                                    Forgot password?
+                                </Link>
+                            </div>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                <Input
+                                    id="dialog-password"
+                                    name="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder="Enter your password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className="pl-10 pr-10"
+                                    disabled={isLoading}
+                                    required
+                                />
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    disabled={isLoading}
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-4 w-4 text-gray-500" />
+                                    ) : (
+                                        <Eye className="h-4 w-4 text-gray-500" />
+                                    )}
+                                    <span className="sr-only">
+                                        {showPassword ? 'Hide password' : 'Show password'}
+                                    </span>
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="dialog-rememberMe"
+                                name="rememberMe"
+                                checked={formData.rememberMe}
+                                onChange={handleChange}
+                                className="h-4 w-4 text-black border-gray-300 rounded focus:ring-black"
+                                disabled={isLoading}
+                            />
+                            <Label htmlFor="dialog-rememberMe" className="text-sm text-gray-600 cursor-pointer">
+                                Remember me for 30 days
+                            </Label>
+                        </div>
+
+                        <Button
+                            type="submit"
+                            className="w-full bg-black hover:bg-gray-800"
+                            disabled={isLoading}
                         >
-                            Forgot password?
-                        </Link>
-                    </div>
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Signing In...
+                                </>
+                            ) : (
+                                'Sign In'
+                            )}
+                        </Button>
 
-                    <Button
-                        type="button"
-                        className="w-full bg-black hover:bg-gray-800"
-                        onClick={handleSubmit}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Logging in...
-                            </>
-                        ) : (
-                            'Log In'
-                        )}
-                    </Button>
-
-                    <div className="text-center text-sm text-gray-600">
-                        Don't have an account?{' '}
-                        <Link
-                            href="/join"
-                            className="font-semibold text-black hover:underline"
-                            onClick={() => onClose()}
-                        >
-                            Sign up
-                        </Link>
-                    </div>
+                        <div className="text-center text-sm text-gray-600 pt-2">
+                            Don't have an account?{' '}
+                            <Link
+                                href="/join"
+                                className="font-semibold text-black hover:underline"
+                                onClick={() => onClose()}
+                            >
+                                Create an account
+                            </Link>
+                        </div>
+                    </form>
                 </div>
             </DialogContent>
         </Dialog>
