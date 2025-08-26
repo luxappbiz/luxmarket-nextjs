@@ -20,12 +20,13 @@ import {
   Shield,
   Bell
 } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { useUser } from '@/contexts/UserContext';
+import CreateProductTab from '@/components/account/CreateProductTab';
 
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState('account');
   const [isEditing, setIsEditing] = useState(false);
-  const { user, logout, updateUser } = useAuth();
+  const { user, logout, updateUser } = useUser();
   const router = useRouter();
 
   // Handle case where user is not loaded yet
@@ -39,12 +40,12 @@ export default function AccountPage() {
 
   // Format user data with fallbacks
   const userData = {
-    name: user.display_name || user.username || 'User',
-    email: user.email || '',
+    name: user.display_name || user.user_login || 'User',
+    email: user.user_email || '',
     phone: user.phone || '',
-    memberSince: user.member_since || 'Recently',
-    membershipType: user.has_active_membership ? 'Premium' : 'Free',
-    avatar: user.avatar || '/images/user-avatar.jpg'
+    memberSince: user.user_registered || 'Recently',
+    membershipType: user.is_event_host ? 'Premium' : 'Free',
+    avatar: user.image || '/images/user-avatar.jpg'
   };
 
   const recentOrders = [
@@ -53,6 +54,7 @@ export default function AccountPage() {
 
   const navigationItems = [
     { id: 'account', label: 'Account', icon: User },
+    { id: 'create-product', label: 'Create Product', icon: Package },
     { id: 'orders', label: 'Orders', icon: Package },
     { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
     { id: 'addresses', label: 'Addresses', icon: MapPin },
@@ -165,7 +167,9 @@ export default function AccountPage() {
             </Card>
           </div>
         );
-
+      case 'create-product':
+        return <CreateProductTab />;  
+        
       case 'orders':
         return (
           <Card>

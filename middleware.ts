@@ -13,6 +13,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-     "/((?!api|_next|favicon.ico|images|icons|assets|login|join|lost-pass).*)",
+    "/((?!_next|favicon.ico|assets|login|join|lost-pass|blog|support|docs|knowledge|platform|privacy|terms|$).*)", // Exclude these paths
   ],
 };
