@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import CreateProductTab from '@/components/account/CreateProductTab';
+import Memberships from '@/components/account/Memberships';
 
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState('account');
@@ -56,7 +57,7 @@ export default function AccountPage() {
     { id: 'account', label: 'Account', icon: User },
     { id: 'create-product', label: 'Create Product', icon: Package },
     { id: 'orders', label: 'Orders', icon: Package },
-    { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
+    { id: 'subscriptions', label: 'Subscriptions & Memberships', icon: CreditCard },
     { id: 'addresses', label: 'Addresses', icon: MapPin },
     { id: 'payment', label: 'Payment Methods', icon: CreditCard },
     { id: 'settings', label: 'Account Settings', icon: Settings },
@@ -284,6 +285,8 @@ export default function AccountPage() {
           </div>
         );
 
+      case 'subscriptions':
+        return <Memberships />  
       default:
         return <div>Content for {activeTab}</div>;
     }

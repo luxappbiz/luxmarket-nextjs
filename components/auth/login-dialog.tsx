@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 import Link from 'next/link';
-import { authApi, authUtils } from '@/lib/api';
+import { authApi } from '@/lib/api';
+import { useUser } from '@/contexts/UserContext';
 
 interface LoginDialogProps {
     isOpen: boolean;
@@ -17,6 +18,7 @@ interface LoginDialogProps {
 
 export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     const router = useRouter();
+    const { login } = useUser();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -41,28 +43,16 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
             const response = await authApi.login(formData.login, formData.password);
 
             if (response.success) {
-                // Use the new auth utility to store auth data
-                authUtils.setAuthData(
+                login(
                     response.token,
                     response.user,
                     formData.rememberMe,
                     response.application_password
                 );
 
-                // Close dialog first
                 onClose();
-
-                // Clear form
                 setFormData({ login: '', password: '', rememberMe: false });
-
                 router.push('/account');
-
-                // Then redirect based on membership status
-                // if (response.user.has_active_membership) {
-                //     router.push('/account');
-                // } else {
-                //     router.push('/membership'); // Redirect to membership page if no active membership
-                // }
             } else {
                 setError(response.error || 'Login failed');
             }
@@ -79,11 +69,9 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
-        // Clear error when user starts typing
         if (error) setError('');
     };
 
-    // Reset form when dialog closes
     const handleOpenChange = (open: boolean) => {
         if (!open) {
             setFormData({ login: '', password: '', rememberMe: false });

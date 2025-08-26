@@ -167,18 +167,5 @@ export const authUtils = {
     }
   },
 
-  // Login user (call this after successful login)
-  setAuthData: (token: string, user: any, rememberMe: boolean = false, appPassword?: string) => {
-    tokenStorage.setToken(token, rememberMe);
-    tokenStorage.setUser(user);
-    
-    if (appPassword) {
-      localStorage.setItem('lux_app_password', appPassword);
-    }
 
-    // Dispatch custom event for components to listen to
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('authStateChanged'));
-    }
-  }
 };

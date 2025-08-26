@@ -22,17 +22,25 @@ export const Header = () => {
         { name: "Vehicles", href: "/vehicles" },
         { name: "Real Estate", href: "/real-estate" },
         { name: "Watches", href: "/watches" },
+        { name: "Plans", href: "/membership" },
     ];
 
     // Check authentication status on component mount and when localStorage changes
     useEffect(() => {
         const checkAuthStatus = () => {
-            const token = tokenStorage.getToken();
-            const userData = tokenStorage.getUser();
+            const token = localStorage.getItem('lux_token');
+            const userData = localStorage.getItem('user');
 
             if (token && userData) {
-                setIsLoggedIn(true);
-                setUser(userData);
+                try {
+                    const parsedUser = JSON.parse(userData);
+                    setIsLoggedIn(true);
+                    setUser(parsedUser);
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    setIsLoggedIn(false);
+                    setUser(null);
+                }
             } else {
                 setIsLoggedIn(false);
                 setUser(null);
@@ -42,9 +50,8 @@ export const Header = () => {
         // Initial check
         checkAuthStatus();
 
-        // Listen for storage changes (when user logs in/out in another tab)
         const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'lux_token' || e.key === 'lux_user') {
+            if (e.key === 'lux_token' || e.key === 'user') { // Changed from tokenStorage keys
                 checkAuthStatus();
             }
         };
@@ -62,18 +69,15 @@ export const Header = () => {
     }, []);
 
     const handleLogout = () => {
-        // Clear all auth data
-        tokenStorage.removeToken();
-        tokenStorage.removeUser();
+        localStorage.removeItem('lux_token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('lux_app_password');
 
-        // Clear cookies (you'll need to implement this in your API)
         document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
-        // Update state
         setIsLoggedIn(false);
         setUser(null);
 
-        // Dispatch custom event for other components
         window.dispatchEvent(new Event('authStateChanged'));
 
         // Redirect to home
