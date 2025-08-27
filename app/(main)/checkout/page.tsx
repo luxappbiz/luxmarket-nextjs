@@ -1,33 +1,38 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckoutModule } from '@/checkout-module';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import type { CheckoutConfig, CheckoutProduct } from '@/checkout-module';
 
-// Your checkout configuration
 const checkoutConfig: CheckoutConfig = {
-  wordpressUrl: process.env.NEXT_PUBLIC_BASE_API_URL || '',
-  consumerKey: process.env.NEXT_PUBLIC_WC_CONSUMER_KEY || '',
-  consumerSecret: process.env.NEXT_PUBLIC_WC_CONSUMER_SECRET || '',
+  wordpressUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://mkdistributionllc.com',
+  consumerKey: process.env.NEXT_PUBLIC_CONSUMER_KEY || '',
+  consumerSecret: process.env.NEXT_PUBLIC_CONSUMER_SECRET || '',
   stripePublicKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
   enabledPaymentMethods: ['stripe'],
   subscriptionsEnabled: true,
   currency: 'USD',
-  taxRate: 0.0,  
+  taxRate: 0.0,
   version: 'v3'
 };
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   
-  // Extract plan details from URL params
   const planId = searchParams.get('planId');
   const productId = searchParams.get('productId');
+  const variationId = searchParams.get('variationId');
   const price = searchParams.get('price');
   const period = searchParams.get('period');
   const interval = searchParams.get('interval');
+  const planName = searchParams.get('planName') || 'Subscription Plan';
 
-  if (!planId || !productId || !price || !period || !interval) {
+  if (!productId || !variationId || !price || !period || !interval) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -35,22 +40,19 @@ export default function CheckoutPage() {
           <p className="text-muted-foreground mb-4">
             Please select a plan from the membership page.
           </p>
-          <a 
-            href="/membership" 
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-          >
+          <Button onClick={() => router.push('/membership')}>
             Go to Membership
-          </a>
+          </Button>
         </div>
       </div>
     );
   }
 
-  // Build checkout product
   const checkoutProducts: CheckoutProduct[] = [
     {
       id: parseInt(productId),
-      name: planId === 'monthly-plan' ? 'Monthly Plan' : 'Annual Plan',
+      variation_id: parseInt(variationId),
+      name: planName,
       price: parseFloat(price),
       quantity: 1,
       is_subscription: true,
@@ -61,24 +63,74 @@ export default function CheckoutPage() {
 
   const handleCheckoutSuccess = (result: any) => {
     console.log('Checkout successful:', result);
-    // You can redirect to success page or show confirmation
+    
+    if (result.subscriptionId) {
+      toast.success('Subscription created successfully!');
+      
+      // Store subscription info
+      localStorage.setItem('activeSubscription', JSON.stringify({
+        subscriptionId: result.subscriptionId,
+        orderId: result.orderId,
+        planName: planName,
+        period: period,
+        nextPayment: result.nextPaymentDate
+      }));
+      
+      router.push('/account');
+    } else {
+      toast.success('Order placed successfully!');
+      router.push(`/order-confirmation?orderId=${result.orderId}`);
+    }
   };
 
   const handleCheckoutError = (error: string) => {
     console.error('Checkout error:', error);
-    // Handle error - show toast, etc.
+    toast.error(error || 'Checkout failed. Please try again.');
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <CheckoutModule
-        products={checkoutProducts}
-        config={checkoutConfig}
-        callbacks={{
-          onSuccess: handleCheckoutSuccess,
-          onError: handleCheckoutError
-        }}
-      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={() => router.push('/membership')}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Plans
+          </Button>
+          
+          <h1 className="text-3xl font-bold">Secure Checkout</h1>
+          <p className="text-muted-foreground mt-2">
+            Complete your {planName} subscription
+          </p>
+        </div>
+
+        <CheckoutModule
+          products={checkoutProducts}
+          config={checkoutConfig}
+          callbacks={{
+            onSuccess: handleCheckoutSuccess,
+            onError: handleCheckoutError
+          }}
+        />
+      </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-center">
+          <div className="h-8 w-32 bg-gray-200 rounded mb-4 mx-auto"></div>
+          <div className="h-4 w-48 bg-gray-200 rounded mx-auto"></div>
+        </div>
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }

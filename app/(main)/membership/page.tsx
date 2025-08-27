@@ -10,7 +10,8 @@ import { Check } from 'lucide-react';
 const plans = [
   {
     id: 'monthly-plan',
-    productId: 123,  
+    productId: 482,
+    variationId: 841,
     name: 'Monthly Plan',
     description: 'Perfect for getting started',
     price: 99,
@@ -26,7 +27,8 @@ const plans = [
   },
   {
     id: 'annual-plan',
-    productId: 124, 
+    productId: 482,
+    variationId: 842,
     name: 'Annual Plan',
     description: 'Best value - save $189/year',
     price: 999,
@@ -44,6 +46,7 @@ const plans = [
   }
 ];
 
+
 export default function MembershipPage() {
   const [selectedPlan, setSelectedPlan] = useState<string>('annual-plan');
   const router = useRouter();
@@ -58,11 +61,12 @@ export default function MembershipPage() {
       const params = new URLSearchParams({
         planId: plan.id,
         productId: plan.productId.toString(),
+        variationId: plan.variationId.toString(),  
         price: plan.price.toString(),
         period: plan.period,
-        interval: plan.interval.toString()
+        interval: plan.interval.toString(),
+        planName: plan.name  
       });
-      
       router.push(`/checkout?${params.toString()}`);
     }
   };
@@ -79,11 +83,10 @@ export default function MembershipPage() {
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan) => (
-            <Card 
+            <Card
               key={plan.id}
-              className={`relative cursor-pointer transition-all hover:shadow-lg ${
-                selectedPlan === plan.id ? 'ring-2 ring-primary' : ''
-              }`}
+              className={`relative cursor-pointer transition-all hover:shadow-lg ${selectedPlan === plan.id ? 'ring-2 ring-primary' : ''
+                }`}
               onClick={() => handleSelectPlan(plan.id)}
             >
               {plan.popular && (
@@ -91,16 +94,16 @@ export default function MembershipPage() {
                   Most Popular
                 </Badge>
               )}
-              
+
               <CardHeader className="text-center pb-8">
                 <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
                 <CardDescription className="mb-4">{plan.description}</CardDescription>
-                
+
                 <div className="mb-4">
                   <span className="text-4xl font-bold">${plan.price}</span>
                   <span className="text-muted-foreground">/{plan.period === 'month' ? 'mo' : 'year'}</span>
                 </div>
-                
+
                 <p className="text-sm text-muted-foreground">{plan.billing}</p>
               </CardHeader>
 
@@ -119,9 +122,9 @@ export default function MembershipPage() {
         </div>
 
         <div className="text-center mt-12">
-          <Button 
+          <Button
             onClick={handleProceedToCheckout}
-            size="lg" 
+            size="lg"
             className="px-8"
           >
             Continue to Checkout
