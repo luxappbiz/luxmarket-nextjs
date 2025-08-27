@@ -80,21 +80,7 @@ export default function LoginPage() {
             </div>
 
             <div className="relative z-10 min-h-screen flex flex-col">
-                {/* Header */}
-                <div className="p-6 md:p-8">
-                    <Link href="/" className="flex items-center space-x-3 text-white">
-                        <div className="relative w-10 h-10">
-                            <Image
-                                src="/images/LUX-Logo.png"
-                                alt="LUX Logo"
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
-                        <span className="text-2xl font-bold">LUX</span>
-                    </Link>
-                </div>
-
+    
                 {/* Main Content */}
                 <div className="flex-1 flex items-center justify-center p-6">
                     <div className="w-full max-w-5xl">
