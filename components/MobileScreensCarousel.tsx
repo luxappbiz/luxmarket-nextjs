@@ -35,13 +35,13 @@ export default function MobileScreensImgCarousel({
         timerRef.current = null;
       }
     };
-  }, [autoPlay, hasMany, intervalMs]);
+  }, [autoPlay, hasMany, intervalMs, goNext]);
 
   // swipe
   const startX = useRef<number | null>(null);
   const onPointerDown = (e: React.PointerEvent) => (startX.current = e.clientX);
   const onPointerUp = (e: React.PointerEvent) => {
-    if (startX.current == null) return;
+    if (startX.current === null) return;
     const delta = e.clientX - startX.current;
     if (Math.abs(delta) > 40) (delta > 0 ? goPrev() : goNext());
     startX.current = null;

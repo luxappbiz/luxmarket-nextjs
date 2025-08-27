@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 
 import Link from 'next/link'
 import MobileScreensImgCarousel from '@/components/MobileScreensCarousel'
+import Image from 'next/image';
 
 const iosScreens = [
     '/images/mobile-screens/login-screen.png',
@@ -75,9 +76,11 @@ export function HeroSection() {
                                     rel="noopener noreferrer"
                                     className="inline-block transition-transform duration-200 hover:scale-105"
                                 >
-                                    <img
+                                   <Image
                                         src="/images/app-store.svg"
                                         alt="Download on the App Store"
+                                        width={120}
+                                        height={48}
                                         className="h-12 w-auto"
                                         draggable={false}
                                     />
