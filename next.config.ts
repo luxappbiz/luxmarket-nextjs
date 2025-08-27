@@ -9,8 +9,14 @@ const nextConfig:NextConfig = {
         port: '',
         pathname: '/wp-content/uploads/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'luxmarket.app',
+        port: '',
+        pathname: '/wp-content/uploads/**',
+      },
     ],
-    domains: ['luxapp.biz'], // Alternative way, but remotePatterns is preferred
+    domains: ['luxapp.biz','luxmarket.app'], // Alternative way, but remotePatterns is preferred
   },
   // Enable experimental features if needed
   experimental: {
