@@ -1,15 +1,24 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import Image from 'next/image'
+
 import Link from 'next/link'
+import MobileScreensImgCarousel from '@/components/MobileScreensCarousel'
+import Image from 'next/image';
+
+const iosScreens = [
+    '/images/mobile-screens/login-screen.png',
+    '/images/mobile-screens/listing-screen.png',
+    '/images/mobile-screens/product-details.png',
+    '/images/mobile-screens/favorites-screen.png',
+    '/images/mobile-screens/easy-navigation.png',
+    '/images/mobile-screens/membership.png',
+];
 
 export function HeroSection() {
     return (
         <section className="relative py-16 md:py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center overflow-hidden">
-
+            {/* background */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 bg-[url('/images/car-garage-white-cars.avif')] bg-cover bg-center bg-no-repeat"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
@@ -18,69 +27,22 @@ export function HeroSection() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
 
-                    {/* Left Side - Mobile Preview */}
                     <div className="flex justify-center lg:justify-start">
-                        <div className="relative">
-                            <div className="w-56 h-[450px] md:w-64 md:h-[500px] bg-white rounded-[2.5rem] p-4 shadow-2xl border-8 border-gray-800">
-                                <div className="w-full h-full bg-gradient-to-br from-gray-100 to-white rounded-[1.5rem] p-6 flex flex-col">
-                                    <div className="text-center mb-6">
-                                        <div className="w-12 h-12 bg-black rounded-lg mx-auto mb-2 flex items-center justify-center p-2">
-                                            <Image
-                                                src="/images/LUX-Logo.png"
-                                                alt="LUX Logo"
-                                                width={32}
-                                                height={32}
-                                                className="object-contain"
-                                            />
-                                        </div>
-                                        <h3 className="font-semibold text-gray-900  font-serif">LUX</h3>
-                                    </div>
-
-                                    <div className="space-y-4 flex-1">
-                                        <div>
-                                            <Label htmlFor="email" className="text-xs text-gray-600">Username or Email Address</Label>
-                                            <Input
-                                                id="email"
-                                                type="email"
-                                                className="mt-1 h-8 text-xs"
-                                                placeholder="Enter email"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <Label htmlFor="password" className="text-xs text-gray-600">Password</Label>
-                                            <Input
-                                                id="password"
-                                                type="password"
-                                                className="mt-1 h-8 text-xs"
-                                                placeholder="Enter password"
-                                            />
-                                        </div>
-
-                                        <Button className="w-full h-8 text-xs bg-black hover:bg-gray-800">
-                                            Login
-                                        </Button>
-
-                                        <p className="text-center text-xs text-gray-600">
-                                            Don't have an account?{' '}
-                                            <span className="text-black font-medium">Sign up</span>
-                                        </p>
-                                    </div>
-
-                                    <div className="mt-auto">
-                                        <p className="text-xs text-gray-600 text-center mb-2">
-                                            2024 LUX APP
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div className="w-56 md:w-64 h-[450px] md:h-[500px] rounded-2xl shadow-2xl border border-white/10 bg-black/60 backdrop-blur-sm overflow-hidden">
+                            <MobileScreensImgCarousel
+                                images={iosScreens}
+                                autoPlay
+                                intervalMs={3000}
+                                alt="LUX iOS app screen"
+                                className="h-full w-full "
+                            />
                         </div>
                     </div>
 
-                    {/* Right Side - Content */}
+                    {/* Right: content (unchanged except using <img> for SVG) */}
                     <div className="text-center lg:text-left">
                         <div className="space-y-6">
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg font-serif ">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg font-serif">
                                 LUX
                             </h1>
                             <p className="text-lg md:text-xl text-gray-200 max-w-md mx-auto lg:mx-0 drop-shadow-md">
@@ -99,7 +61,7 @@ export function HeroSection() {
                                 </p>
 
                                 <p className="text-sm text-gray-300">
-                                    Don't have an account?{' '}
+                                    Don&apos;t have an account?{' '}
                                     <span className="text-white font-medium underline cursor-pointer hover:text-gray-200 transition-colors">
                                         Sign up
                                     </span>
@@ -114,17 +76,19 @@ export function HeroSection() {
                                     rel="noopener noreferrer"
                                     className="inline-block transition-transform duration-200 hover:scale-105"
                                 >
-                                    <Image
+                                   <Image
                                         src="/images/app-store.svg"
                                         alt="Download on the App Store"
-                                        width={140}
+                                        width={120}
                                         height={48}
                                         className="h-12 w-auto"
+                                        draggable={false}
                                     />
                                 </Link>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
