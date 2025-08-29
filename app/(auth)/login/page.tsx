@@ -8,15 +8,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Check, Loader2, Mail, Lock } from 'lucide-react';
-import { authApi, authUtils } from '@/lib/api';
+import { authApi } from '@/lib/api';
+import { useUser } from '@/contexts/UserContext';
 
 export default function LoginPage() {
     const router = useRouter();
+    const { login } = useUser();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [formData, setFormData] = useState({
-        login: '', // Can be email or username
+        login: '',
         password: '',
         rememberMe: false
     });
@@ -36,20 +38,13 @@ export default function LoginPage() {
             const response = await authApi.login(formData.login, formData.password);
 
             if (response.success) {
-                // Store auth data using the new utility
-                authUtils.setAuthData(
+                login(
                     response.token,
                     response.user,
                     formData.rememberMe,
                     response.application_password
                 );
                 router.push('/account');
-                // Redirect based on membership status
-                // if (response.user.has_active_membership) {
-                //     router.push('/account');
-                // } else {
-                //     router.push('/membership'); // Redirect to membership page if no active membership
-                // }
             } else {
                 setError(response.error || 'Login failed');
             }
@@ -66,13 +61,11 @@ export default function LoginPage() {
             ...formData,
             [name]: type === 'checkbox' ? checked : value
         });
-        // Clear error when user starts typing
         if (error) setError('');
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-            {/* Background Pattern */}
             <div className="absolute inset-0 opacity-5">
                 <div className="absolute inset-0" style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -80,13 +73,24 @@ export default function LoginPage() {
             </div>
 
             <div className="relative z-10 min-h-screen flex flex-col">
-    
+                <div className="p-6 md:p-8">
+                    <Link href="/" className="flex items-center space-x-3 text-white">
+                        <div className="relative w-10 h-10">
+                            <Image
+                                src="/images/LUX-Logo.png"
+                                alt="LUX Logo"
+                                fill
+                                className="object-contain"
+                            />
+                        </div>
+                        <span className="text-2xl font-bold">LUX</span>
+                    </Link>
+                </div>
                 {/* Main Content */}
                 <div className="flex-1 flex items-center justify-center p-6">
                     <div className="w-full max-w-5xl">
                         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
                             <div className="md:flex">
-                                {/* Form Section */}
                                 <div className="md:w-3/5 p-8 md:p-12">
                                     <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
                                     <p className="text-gray-600 mb-8">Log in to your LUX account</p>
@@ -195,7 +199,6 @@ export default function LoginPage() {
                                     </form>
                                 </div>
 
-                                {/* Info Section */}
                                 <div className="md:w-2/5 bg-gray-900 p-8 md:p-12 text-white">
                                     <h3 className="text-2xl font-bold mb-6">Welcome to LUX</h3>
                                     <div className="space-y-6">

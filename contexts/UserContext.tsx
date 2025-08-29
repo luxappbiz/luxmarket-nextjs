@@ -82,25 +82,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const isAuthenticated = !!user;
 
-  // Load user from both cookies and localStorage
   useEffect(() => {
     const loadUser = () => {
       try {
-        // First try cookies
-        const userCookie = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('user_info='))
-          ?.split('=')[1];
-        
-        if (userCookie) {
-          const userData = JSON.parse(decodeURIComponent(userCookie));
-          setUser(userData);
-          setIsLoading(false);
-          return;
-        }
-        
-        // Fallback to localStorage
-        const storedUser = localStorage.getItem("lux_user") || localStorage.getItem("user");
+        const storedUser = localStorage.getItem("user");
         if (storedUser) {
           const userData = JSON.parse(storedUser);
           setUser(userData);
@@ -114,51 +99,59 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     loadUser();
 
-    // Listen for storage changes (cross-tab sync)
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'lux_user' || e.key === 'user') {
-        loadUser();
+      if (e.key === 'user') {
+        if (e.newValue) {
+          try {
+            const userData = JSON.parse(e.newValue);
+            setUser(userData);
+          } catch (error) {
+            console.error('Error parsing user data:', error);
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
       }
     };
 
     window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Update localStorage when user changes (for backward compatibility)
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
-      localStorage.removeItem("lux_user");
-    }
-  }, [user]);
+const login = (token: string, userData: User, rememberMe = false, appPassword?: string) => {
+  const userWithAuth = { ...userData, token, application_password: appPassword };
+  setUser(userWithAuth);
+  
+  localStorage.setItem("user", JSON.stringify(userWithAuth));
+  localStorage.setItem("lux_token", token);
+  if (appPassword) {
+    localStorage.setItem("lux_app_password", appPassword);
+  }
 
-  const login = (token: string, userData: User, rememberMe = false, appPassword?: string) => {
-    // Store user data
-    const userWithAuth = { ...userData, token, application_password: appPassword };
-    setUser(userWithAuth);
-    
-    // Store in localStorage
-    localStorage.setItem("user", JSON.stringify(userWithAuth));
-    localStorage.setItem("lux_token", token);
-    if (appPassword) {
-      localStorage.setItem("lux_app_password", appPassword);
-    }
-  };
+  // Also set cookie for middleware
+  const days = rememberMe ? 30 : 1;
+  const expires = new Date();
+  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+  document.cookie = `auth_token=${token};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
 
-  const logout = () => {
-    setUser(null);
-    // Clear both localStorage and cookies
-    localStorage.removeItem("user");
-    localStorage.removeItem("lux_user");
-    localStorage.removeItem("lux_token");
-    localStorage.removeItem("lux_app_password");
-  };
+  window.dispatchEvent(new Event('authStateChanged'));
+};
+
+const logout = () => {
+  setUser(null);
+  
+  localStorage.removeItem("user");
+  localStorage.removeItem("lux_user");
+  localStorage.removeItem("lux_token");
+  localStorage.removeItem("lux_app_password");
+  
+  // Clear cookies
+  document.cookie = 'user_info=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+  window.dispatchEvent(new Event('authStateChanged'));
+};
 
   const updateUser = (userData: Partial<User>) => {
     if (user) {
@@ -168,14 +161,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
-  const value = { 
-    user, 
-    setUser, 
-    logout, 
-    isLoading, 
+  const value = {
+    user,
+    setUser,
+    logout,
+    isLoading,
     isAuthenticated,
     login,
     updateUser
   };
+  
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
