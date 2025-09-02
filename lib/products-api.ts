@@ -1,9 +1,9 @@
 // lib/products-api.ts
 import axios from 'axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
-const CONSUMER_KEY = process.env.NEXT_PUBLIC_WC_CONSUMER_KEY;
-const CONSUMER_SECRET = process.env.NEXT_PUBLIC_WC_CONSUMER_SECRET;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const CONSUMER_KEY = process.env.NEXT_PUBLIC_CONSUMER_KEY ;
+const CONSUMER_SECRET = process.env.NEXT_PUBLIC_CONSUMER_SECRET;
 
 // Create axios instance with basic auth
 const productsApi = axios.create({
