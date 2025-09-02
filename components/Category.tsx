@@ -82,11 +82,12 @@ export default function Category({
     if (hasLoadedAll || loadingMore) return;
     try {
       setLoadingMore(true);
-      const currentPage = Math.floor(allProducts.length / 20) + 1;
+      const pageSize = perPage ?? 20;
+      const currentPage = Math.floor(allProducts.length / pageSize) + 1;
 
       const response = await productsService.getProducts({
         page: currentPage + 1,
-        per_page: 20,
+        per_page: pageSize,
         search: searchQuery.trim() || undefined,
         orderby: 'date',
         order: 'desc',
