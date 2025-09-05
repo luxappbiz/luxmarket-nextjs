@@ -5,7 +5,7 @@ export default function VehiclesPage() {
     <Category
       categoryId="32"                             
       title="Explore Vehicles"
-      subtitle="Luxury cars, SUVs, and more from verified sellers"
+      // subtitle="Luxury cars, SUVs, and more from verified sellers"
       defaultView="grid"
       perPage={12}
     />

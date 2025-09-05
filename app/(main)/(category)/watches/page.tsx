@@ -5,7 +5,7 @@ export default function WatchesPage() {
     <Category
       categoryId="21"
       title="Explore Watches"
-      subtitle="Iconic luxury timepieces from trusted sellers"
+      // subtitle="Iconic luxury timepieces from trusted sellers"
       defaultView="grid"
       perPage={12}
     />

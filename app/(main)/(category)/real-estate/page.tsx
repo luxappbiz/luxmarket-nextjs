@@ -5,7 +5,7 @@ export default function RealEstatePage() {
     <Category
       categoryId="33"
       title="Explore Real Estate"
-      subtitle="Exclusive properties, penthouses, and estates"
+      // subtitle="Exclusive properties, penthouses, and estates"
       defaultView="grid"
       perPage={12}
     />

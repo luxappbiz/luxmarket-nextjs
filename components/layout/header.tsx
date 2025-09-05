@@ -110,19 +110,16 @@ export const Header = () => {
                             {isLoggedIn ? (
                                 // Logged in state
                                 <div className="flex items-center space-x-3">
-                                    <span className="text-sm text-gray-600">
-                                        Welcome, {user?.display_name || user?.username || 'User'}
-                                    </span>
                                     <Button
-                                        variant="ghost"
+                                        variant="outline"
                                         size="sm"
                                         className="font-semibold text-gray-700 hover:text-black"
                                         onClick={() => router.push('/account')}
                                     >
                                         <User className="w-4 h-4 mr-2" />
-                                        Account
+                                        {user?.display_name || user?.username || 'User'}
                                     </Button>
-                                    <Button
+                                    {/* <Button
                                         variant="ghost"
                                         size="sm"
                                         className="font-semibold text-gray-700 hover:text-red-600"
@@ -130,13 +127,13 @@ export const Header = () => {
                                     >
                                         <LogOut className="w-4 h-4 mr-2" />
                                         Logout
-                                    </Button>
+                                    </Button> */}
                                 </div>
                             ) : (
                                 // Not logged in state
                                 <>
                                     <Button
-                                        variant="ghost"
+                                        variant="outline"
                                         size="sm"
                                         className="font-semibold text-gray-700 hover:text-black"
                                         onClick={() => window.dispatchEvent(new Event('openLoginDialog'))}
