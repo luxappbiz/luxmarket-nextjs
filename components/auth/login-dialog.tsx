@@ -105,7 +105,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                                     id="dialog-login"
                                     name="login"
                                     type="text"
-                                    placeholder="john@example.com or johndoe"
+                                    // placeholder="john@example.com or johndoe"
                                     value={formData.login}
                                     onChange={handleChange}
                                     className="pl-10"

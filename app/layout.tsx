@@ -4,6 +4,8 @@ import { Inter, Baskervville, Roboto } from 'next/font/google'
 import './globals.css'
 import { UserProvider } from '@/contexts/UserContext'
 import { Toaster } from "@/components/ui/sonner"
+import { LoginDialog } from '@/components/auth/login-dialog'
+import Container from '@/components/layout/container'
 
 const inter = Inter({ subsets: ['latin'] })
 const baskervville = Baskervville({
@@ -20,7 +22,6 @@ const roboto = Roboto({
   display: 'swap',
 })
 
-
 export const metadata: Metadata = {
   title: 'LUX Market - Luxury Marketplace',
   description: 'A membership marketplace that connects luxury buyers and sellers.',
@@ -34,12 +35,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${baskervville.variable} ${roboto.variable} font-sans`}>
-          <UserProvider>
-          <main className="min-h-screen">
+        <UserProvider>
+          <Container>
             {children}
-          </main>
+          </Container>
           <Toaster />
-          </UserProvider>
+        </UserProvider>
       </body>
     </html>
   )
