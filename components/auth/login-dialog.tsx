@@ -17,8 +17,11 @@ interface LoginDialogProps {
 }
 
 export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
+    const { login, user } = useUser();
+    if (user) {
+        return <></>;
+    }
     const router = useRouter();
-    const { login } = useUser();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -31,17 +34,13 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-
         if (!formData.login || !formData.password) {
             setError('Please fill in all fields');
             return;
         }
-
         setIsLoading(true);
-
         try {
             const response = await authApi.login(formData.login, formData.password);
-
             if (response.success) {
                 login(
                     response.token,
@@ -49,7 +48,6 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                     formData.rememberMe,
                     response.application_password
                 );
-
                 onClose();
                 setFormData({ login: '', password: '', rememberMe: false });
                 router.push('/account');
@@ -88,14 +86,12 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                     <DialogTitle className="text-2xl font-bold text-center">Welcome Back</DialogTitle>
                     <p className="text-center text-gray-600 text-sm">Log in to your LUX account</p>
                 </DialogHeader>
-
                 <div className="space-y-4 mt-4">
                     {error && (
                         <div className="p-3 bg-red-50 border border-red-200 rounded-md">
                             <p className="text-sm text-red-600">{error}</p>
                         </div>
                     )}
-
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="dialog-login">Email or Username</Label>
@@ -105,7 +101,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                                     id="dialog-login"
                                     name="login"
                                     type="text"
-                                    placeholder="john@example.com or johndoe"
+                                    // placeholder="john@example.com or johndoe"
                                     value={formData.login}
                                     onChange={handleChange}
                                     className="pl-10"
@@ -132,7 +128,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                                     id="dialog-password"
                                     name="password"
                                     type={showPassword ? 'text' : 'password'}
-                                    placeholder="Enter your password"
+                                    // placeholder="Enter your password"
                                     value={formData.password}
                                     onChange={handleChange}
                                     className="pl-10 pr-10"

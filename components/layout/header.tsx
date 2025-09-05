@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 
 export const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [showLoginDialog, setShowLoginDialog] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<any>(null);
     const router = useRouter();
@@ -46,22 +45,17 @@ export const Header = () => {
                 setUser(null);
             }
         };
-
         // Initial check
         checkAuthStatus();
-
         const handleStorageChange = (e: StorageEvent) => {
             if (e.key === 'lux_token' || e.key === 'user') { // Changed from tokenStorage keys
                 checkAuthStatus();
             }
         };
-
         window.addEventListener('storage', handleStorageChange);
-
         // Custom event for same-tab login/logout
         const handleAuthChange = () => checkAuthStatus();
         window.addEventListener('authStateChanged', handleAuthChange);
-
         return () => {
             window.removeEventListener('storage', handleStorageChange);
             window.removeEventListener('authStateChanged', handleAuthChange);
@@ -72,14 +66,10 @@ export const Header = () => {
         localStorage.removeItem('lux_token');
         localStorage.removeItem('user');
         localStorage.removeItem('lux_app_password');
-
         document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-
         setIsLoggedIn(false);
         setUser(null);
-
         window.dispatchEvent(new Event('authStateChanged'));
-
         // Redirect to home
         router.push('/');
     };
@@ -102,7 +92,6 @@ export const Header = () => {
                             </div>
                             <span className="text-2xl font-bold text-gray-900 tracking-tight font-serif">LUX</span>
                         </Link>
-
                         {/* Desktop Navigation */}
                         <nav className="hidden md:flex items-center space-x-8">
                             {navigation.map((item) => (
@@ -116,7 +105,6 @@ export const Header = () => {
                                 </Link>
                             ))}
                         </nav>
-
                         {/* Desktop CTA */}
                         <div className="hidden md:flex items-center space-x-3">
                             {isLoggedIn ? (
@@ -151,9 +139,9 @@ export const Header = () => {
                                         variant="ghost"
                                         size="sm"
                                         className="font-semibold text-gray-700 hover:text-black"
-                                        onClick={() => setShowLoginDialog(true)}
+                                        onClick={() => window.dispatchEvent(new Event('openLoginDialog'))}
                                     >
-                                        Log In
+                                        Login
                                     </Button>
                                     <Button
                                         size="sm"
@@ -165,7 +153,6 @@ export const Header = () => {
                                 </>
                             )}
                         </div>
-
                         {/* Mobile Menu */}
                         <Sheet open={isOpen} onOpenChange={setIsOpen}>
                             <SheetTrigger asChild className="md:hidden">
@@ -190,7 +177,6 @@ export const Header = () => {
                                             <span className="text-xl font-bold text-gray-900">LUX</span>
                                         </div>
                                     </div>
-
                                     {/* User Info (Mobile) */}
                                     {isLoggedIn && (
                                         <div className="px-4 py-3 border-b border-gray-100">
@@ -200,7 +186,6 @@ export const Header = () => {
                                             <p className="text-xs text-gray-600">{user?.email}</p>
                                         </div>
                                     )}
-
                                     {/* Navigation */}
                                     <nav className="flex-1 py-6">
                                         <div className="space-y-2">
@@ -214,7 +199,6 @@ export const Header = () => {
                                                     {item.name}
                                                 </Link>
                                             ))}
-
                                             {/* Account link for mobile when logged in */}
                                             {isLoggedIn && (
                                                 <Link
@@ -228,7 +212,6 @@ export const Header = () => {
                                             )}
                                         </div>
                                     </nav>
-
                                     {/* Mobile CTA */}
                                     <div className="border-t border-gray-100 pt-6 pb-4 space-y-3 px-4">
                                         {isLoggedIn ? (
@@ -250,10 +233,10 @@ export const Header = () => {
                                                     className="w-full h-12 font-semibold text-gray-700 border-gray-300 hover:bg-gray-50"
                                                     onClick={() => {
                                                         setIsOpen(false);
-                                                        setShowLoginDialog(true);
+                                                        window.dispatchEvent(new Event('openLoginDialog'));
                                                     }}
                                                 >
-                                                    Log In
+                                                    Login
                                                 </Button>
                                                 <Button
                                                     className="w-full h-12 bg-black text-white hover:bg-gray-800 font-semibold shadow-md"
@@ -267,11 +250,10 @@ export const Header = () => {
                                             </>
                                         )}
                                     </div>
-
                                     {/* Mobile Footer */}
                                     <div className="text-center py-4 border-t border-gray-100">
                                         <p className="text-xs text-gray-500">
-                                            &copy; 2025 LUX. All rights reserved.
+                                            &copy; {new Date().getFullYear()} LUX. All rights reserved.
                                         </p>
                                     </div>
                                 </div>
@@ -280,14 +262,6 @@ export const Header = () => {
                     </div>
                 </div>
             </header>
-
-            {/* Login Dialog */}
-            {!isLoggedIn && (
-                <LoginDialog
-                    isOpen={showLoginDialog}
-                    onClose={() => setShowLoginDialog(false)}
-                />
-            )}
         </>
     );
 };
