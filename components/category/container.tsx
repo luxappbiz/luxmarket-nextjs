@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Filter, Grid3X3, List, Loader2 } from 'lucide-react';
 import ProductItem from '@/components/products/ProductItem';
 import { productsService, Product } from '@/lib/products-api';
-import CategoryHero from './category/hero';
+import CategoryHero from './hero';
 
 type Props = {
   categoryId: string;
@@ -31,7 +31,7 @@ const priceRanges = [
   { value: '1m+', label: 'Over $1M' },
 ];
 
-export default function Category({
+export default function CategoryContainer({
   categoryId,
   title = 'Explore Collection',
   subtitle,
@@ -82,7 +82,6 @@ export default function Category({
       setLoadingMore(true);
       const pageSize = perPage ?? 20;
       const currentPage = Math.floor(allProducts.length / pageSize) + 1;
-
       const response = await productsService.getProducts({
         page: currentPage + 1,
         per_page: pageSize,
@@ -91,7 +90,6 @@ export default function Category({
         order: 'desc',
         category: categoryId,
       });
-
       setAllProducts(prev => [...prev, ...response.products]);
       setHasLoadedAll(prev => {
         const total = prev ? allProducts.length + response.products.length : allProducts.length + response.products.length;
@@ -195,7 +193,6 @@ export default function Category({
           </div>
         </div>
       </section>
-
       {/* Filters */}
       {showFilters && (
         <section className="bg-gray-100 border-b py-4">
@@ -229,7 +226,6 @@ export default function Category({
           </div>
         </section>
       )}
-
       {/* Results */}
       <section className="py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -240,7 +236,6 @@ export default function Category({
               <span className="ml-2 text-gray-500">Loading products...</span>
             </div>
           )}
-
           {/* Error */}
           {error && (
             <div className="text-center py-12">
@@ -248,7 +243,6 @@ export default function Category({
               <Button onClick={loadAllProducts}>Try Again</Button>
             </div>
           )}
-
           {/* Empty */}
           {!loading && !error && filteredAndSortedProducts.length === 0 && (
             <div className="text-center py-12">
@@ -259,7 +253,6 @@ export default function Category({
               <Button variant="outline" onClick={handleClearFilters}>Clear Search & Filters</Button>
             </div>
           )}
-
           {/* Grid/List */}
           {!loading && !error && filteredAndSortedProducts.length > 0 && (
             <div className={`grid gap-6 ${viewMode === 'grid'
@@ -271,7 +264,6 @@ export default function Category({
               ))}
             </div>
           )}
-
           {/* Load more */}
           {!loading && !error && filteredAndSortedProducts.length > 0 && !hasLoadedAll && (
             <div className="mt-12 text-center">
