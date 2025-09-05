@@ -44,8 +44,12 @@ export function HeroSection() {
                                 A membership marketplace that connects luxury buyers and sellers.
                             </p>
                             <div className="space-y-4">
-                                <Button size="lg" className="bg-white text-black hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all">
-                                    Log In
+                                <Button
+                                  size="lg"
+                                  className="bg-white text-black hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all"
+                                  onClick={() => window.dispatchEvent(new Event('openLoginDialog'))}
+                                >
+                                  Login
                                 </Button>
                                 <p className="text-sm text-gray-300">
                                     <span className="underline cursor-pointer hover:text-white transition-colors">

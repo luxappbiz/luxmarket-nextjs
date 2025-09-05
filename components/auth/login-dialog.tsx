@@ -88,14 +88,12 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                     <DialogTitle className="text-2xl font-bold text-center">Welcome Back</DialogTitle>
                     <p className="text-center text-gray-600 text-sm">Log in to your LUX account</p>
                 </DialogHeader>
-
                 <div className="space-y-4 mt-4">
                     {error && (
                         <div className="p-3 bg-red-50 border border-red-200 rounded-md">
                             <p className="text-sm text-red-600">{error}</p>
                         </div>
                     )}
-
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="dialog-login">Email or Username</Label>
@@ -132,7 +130,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                                     id="dialog-password"
                                     name="password"
                                     type={showPassword ? 'text' : 'password'}
-                                    placeholder="Enter your password"
+                                    // placeholder="Enter your password"
                                     value={formData.password}
                                     onChange={handleChange}
                                     className="pl-10 pr-10"

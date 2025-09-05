@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 
 export const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [showLoginDialog, setShowLoginDialog] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<any>(null);
     const router = useRouter();
@@ -140,7 +139,7 @@ export const Header = () => {
                                         variant="ghost"
                                         size="sm"
                                         className="font-semibold text-gray-700 hover:text-black"
-                                        onClick={() => setShowLoginDialog(true)}
+                                        onClick={() => window.dispatchEvent(new Event('openLoginDialog'))}
                                     >
                                         Login
                                     </Button>
@@ -234,7 +233,7 @@ export const Header = () => {
                                                     className="w-full h-12 font-semibold text-gray-700 border-gray-300 hover:bg-gray-50"
                                                     onClick={() => {
                                                         setIsOpen(false);
-                                                        setShowLoginDialog(true);
+                                                        window.dispatchEvent(new Event('openLoginDialog'));
                                                     }}
                                                 >
                                                     Login
@@ -263,13 +262,6 @@ export const Header = () => {
                     </div>
                 </div>
             </header>
-            {/* Login Dialog */}
-            {/* {!isLoggedIn && (
-                <LoginDialog
-                    isOpen={showLoginDialog}
-                    onClose={() => setShowLoginDialog(false)}
-                />
-            )} */}
         </>
     );
 };
