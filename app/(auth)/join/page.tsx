@@ -13,6 +13,7 @@ import { authApi, tokenStorage } from '@/lib/api';
 export default function JoinPage() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [formData, setFormData] = useState({
@@ -35,33 +36,26 @@ export default function JoinPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-
         // Validate form
         if (!formData.termsAccepted) {
             setError('Please accept the terms and conditions');
             return;
         }
-
         if (!isPasswordValid) {
             setError('Password does not meet requirements');
             return;
         }
-
         if (!doPasswordsMatch) {
             setError('Passwords do not match');
             return;
         }
-
         setIsLoading(true);
-
         try {
             const response = await authApi.register(formData.email, formData.password);
-
             if (response.success) {
                 // Store token and user data
                 tokenStorage.setToken(response.token);
                 tokenStorage.setUser(response.user);
-
                 // Redirect to account page or show success message
                 router.push('/account');
             } else {
@@ -92,9 +86,7 @@ export default function JoinPage() {
                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
                 }} />
             </div>
-
             <div className="relative z-10 min-h-screen flex flex-col">
-         
                 {/* Main Content */}
                 <div className="flex-1 flex items-center justify-center p-6">
                     <div className="w-full max-w-5xl">
@@ -104,13 +96,11 @@ export default function JoinPage() {
                                 <div className="md:w-3/5 p-8 md:p-12">
                                     <h2 className="text-3xl font-bold text-gray-900 mb-2">Join LUX Today</h2>
                                     <p className="text-gray-600 mb-8">Start your journey into luxury</p>
-
                                     {error && (
                                         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                                             <p className="text-sm text-red-600">{error}</p>
                                         </div>
                                     )}
-
                                     <div className="space-y-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="email">Email</Label>
@@ -126,7 +116,6 @@ export default function JoinPage() {
                                                 disabled={isLoading}
                                             />
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="password">Password</Label>
                                             <div className="relative">
@@ -134,7 +123,7 @@ export default function JoinPage() {
                                                     id="password"
                                                     name="password"
                                                     type={showPassword ? 'text' : 'password'}
-                                                    placeholder="Create a strong password"
+                                                    // placeholder="Create a strong password"
                                                     value={formData.password}
                                                     onChange={handleChange}
                                                     className="h-11 pr-10"
@@ -173,25 +162,39 @@ export default function JoinPage() {
                                                 </div>
                                             )}
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="confirmPassword">Confirm Password</Label>
-                                            <Input
-                                                id="confirmPassword"
-                                                name="confirmPassword"
-                                                type="password"
-                                                placeholder="Confirm your password"
-                                                value={formData.confirmPassword}
-                                                onChange={handleChange}
-                                                className="h-11"
-                                                required
-                                                disabled={isLoading}
-                                            />
+                                            <div className="relative">
+                                                <Input
+                                                    id="confirmPassword"
+                                                    name="confirmPassword"
+                                                    type="password"
+                                                    // placeholder="Confirm your password"
+                                                    value={formData.confirmPassword}
+                                                    onChange={handleChange}
+                                                    className="h-11"
+                                                    required
+                                                    disabled={isLoading}
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                    disabled={isLoading}
+                                                >
+                                                    {showConfirmPassword ? (
+                                                        <EyeOff className="h-4 w-4 text-gray-500" />
+                                                    ) : (
+                                                        <Eye className="h-4 w-4 text-gray-500" />
+                                                    )}
+                                                </Button>
+                                            </div>
                                             {formData.confirmPassword && !doPasswordsMatch && (
                                                 <p className="text-sm text-red-600">Passwords do not match</p>
                                             )}
                                         </div>
-
                                         <div className="flex items-start space-x-2 pt-2">
                                             <input
                                                 type="checkbox"
@@ -214,7 +217,6 @@ export default function JoinPage() {
                                                 </Link>
                                             </Label>
                                         </div>
-
                                         <Button
                                             onClick={handleSubmit}
                                             className="w-full h-12 bg-black hover:bg-gray-900 text-white font-medium"
@@ -229,16 +231,14 @@ export default function JoinPage() {
                                                 'Create Account'
                                             )}
                                         </Button>
-
                                         <p className="text-center text-sm text-gray-600 pt-2">
                                             Already have an account?{' '}
                                             <Link href="/login" className="font-semibold text-black hover:underline">
-                                                Log in
+                                                Login
                                             </Link>
                                         </p>
                                     </div>
                                 </div>
-
                                 {/* Benefits Section */}
                                 <div className="md:w-2/5 bg-gray-900 p-8 md:p-12 text-white">
                                     <h3 className="text-2xl font-bold mb-6">Member Benefits</h3>
@@ -280,8 +280,7 @@ export default function JoinPage() {
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div className="mt-8 pt-8 border-t border-gray-800">
+                                    {/* <div className="mt-8 pt-8 border-t border-gray-800">
                                         <p className="text-sm text-gray-400">Join over 10,000 luxury enthusiasts</p>
                                         <div className="flex items-center mt-4 -space-x-2">
                                             {[1, 2, 3, 4, 5].map((i) => (
@@ -294,7 +293,7 @@ export default function JoinPage() {
                                                 <span className="text-xs">+</span>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
