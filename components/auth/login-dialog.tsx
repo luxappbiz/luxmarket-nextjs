@@ -17,8 +17,11 @@ interface LoginDialogProps {
 }
 
 export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
+    const { login, user } = useUser();
+    if (user) {
+        return <></>;
+    }
     const router = useRouter();
-    const { login } = useUser();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -31,17 +34,13 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-
         if (!formData.login || !formData.password) {
             setError('Please fill in all fields');
             return;
         }
-
         setIsLoading(true);
-
         try {
             const response = await authApi.login(formData.login, formData.password);
-
             if (response.success) {
                 login(
                     response.token,
@@ -49,7 +48,6 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                     formData.rememberMe,
                     response.application_password
                 );
-
                 onClose();
                 setFormData({ login: '', password: '', rememberMe: false });
                 router.push('/account');
