@@ -23,12 +23,10 @@ export function HeroSection() {
                 <div className="absolute inset-0 bg-[url('/images/car-garage-white-cars.avif')] bg-cover bg-center bg-no-repeat"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
             </div>
-
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
-
                     <div className="flex justify-center lg:justify-start">
-                        <div className="w-56 md:w-64 h-[450px] md:h-[500px] rounded-2xl shadow-2xl border border-white/10 bg-black/60 backdrop-blur-sm overflow-hidden">
+                        <div className="w-56 md:w-64 h-[450px] md:h-[500px] overflow-hidden">
                             <MobileScreensImgCarousel
                                 images={iosScreens}
                                 autoPlay
@@ -38,28 +36,22 @@ export function HeroSection() {
                             />
                         </div>
                     </div>
-
                     {/* Right: content (unchanged except using <img> for SVG) */}
                     <div className="text-center lg:text-left">
                         <div className="space-y-6">
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg font-serif">
-                                LUX
-                            </h1>
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg font-serif">LUX</h1>
                             <p className="text-lg md:text-xl text-gray-200 max-w-md mx-auto lg:mx-0 drop-shadow-md">
                                 A membership marketplace that connects luxury buyers and sellers.
                             </p>
-
                             <div className="space-y-4">
                                 <Button size="lg" className="bg-white text-black hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all">
                                     Log In
                                 </Button>
-
                                 <p className="text-sm text-gray-300">
                                     <span className="underline cursor-pointer hover:text-white transition-colors">
                                         Forgot password?
                                     </span>
                                 </p>
-
                                 <p className="text-sm text-gray-300">
                                     Don&apos;t have an account?{' '}
                                     <span className="text-white font-medium underline cursor-pointer hover:text-gray-200 transition-colors">
@@ -67,7 +59,6 @@ export function HeroSection() {
                                     </span>
                                 </p>
                             </div>
-
                             <div className="pt-6">
                                 <p className="text-sm text-gray-300 mb-3">Available on App Store</p>
                                 <Link
@@ -88,9 +79,8 @@ export function HeroSection() {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
-    )
+    );
 }

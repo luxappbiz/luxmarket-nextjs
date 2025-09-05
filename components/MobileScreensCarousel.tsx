@@ -48,27 +48,28 @@ export default function MobileScreensImgCarousel({
   };
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
-      <div
-        className="flex h-full w-full transition-transform duration-300 ease-in-out"
-        style={{ transform: `translateX(-${current * 100}%)` }}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-      >
-        {slides.map((src) => (
-          <div key={src} className="min-w-full h-full grid place-items-center bg-black">
-            <img
-              src={src}
-              alt={alt}
-              className="max-h-full max-w-full object-contain select-none"
-              draggable={false}
-              loading="eager"
-              onDragStart={(e) => e.preventDefault()}
-            />
-          </div>
-        ))}
+    <div className="relative p-4">
+      <div className={`relative overflow-hidden ${className}`}>
+        <div
+          className="flex h-full w-full transition-transform duration-300 ease-in-out"
+          style={{ transform: `translateX(-${current * 100}%)` }}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+        >
+          {slides.map((src) => (
+            <div key={src} className="min-w-full h-full grid place-items-center bg-black">
+              <img
+                src={src}
+                alt={alt}
+                className="max-h-full max-w-full object-contain select-none"
+                draggable={false}
+                loading="eager"
+                onDragStart={(e) => e.preventDefault()}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-
       {hasMany && (
         <>
           <button
@@ -85,7 +86,7 @@ export default function MobileScreensImgCarousel({
           >
             ›
           </button>
-          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
+          <div className="absolute -bottom-2 left-0 right-0 flex justify-center gap-2">
             {slides.map((_, i) => (
               <button
                 key={i}
