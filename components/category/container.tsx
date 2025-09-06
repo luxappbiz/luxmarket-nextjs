@@ -6,6 +6,7 @@ import { Filter, Grid3X3, List, Loader2 } from 'lucide-react';
 import ProductItem from '@/components/products/ProductItem';
 import { productsService, Product } from '@/lib/products-api';
 import CategoryHero from './hero';
+import LoginForm from '../auth/LoginForm';
 
 type Props = {
   categoryId: string;
@@ -38,13 +39,14 @@ export default function CategoryContainer({
   defaultView = 'grid',
   perPage = 12,
 }: Props) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<any>(null);
   // UI
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('date');
   const [priceRange, setPriceRange] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(defaultView);
   const [showFilters, setShowFilters] = useState(false);
-
   // API state
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -151,6 +153,55 @@ export default function CategoryContainer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, categoryId]);
 
+  // Check authentication status on component mount and when localStorage changes
+  useEffect(() => {
+      const checkAuthStatus = () => {
+          const token = localStorage.getItem('lux_token');
+          const userData = localStorage.getItem('user');
+          if (token && userData) {
+              try {
+                  const parsedUser = JSON.parse(userData);
+                  setIsLoggedIn(true);
+                  setUser(parsedUser);
+              } catch (error) {
+                  console.error('Error parsing user data:', error);
+                  setIsLoggedIn(false);
+                  setUser(null);
+              }
+          } else {
+              setIsLoggedIn(false);
+              setUser(null);
+          }
+      };
+      // Initial check
+      checkAuthStatus();
+  }, []);
+
+  console.log('isLoggedIn:', isLoggedIn);
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Hero */}
+        <CategoryHero
+          title={title}
+          subtitle={subtitle}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          loadAllProducts={loadAllProducts}
+          loading={loading}
+          showSearch={false}
+        />
+        <section>
+        <div className="container mx-auto p-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <LoginForm />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
@@ -185,7 +236,6 @@ export default function CategoryContainer({
                 Filters
               </Button>
             </div>
-
             <p className="text-gray-600">
               Showing <span className="font-medium text-gray-900">{filteredAndSortedProducts.length}</span>{' '}
               {filteredAndSortedProducts.length === 1 ? 'result' : 'results'}

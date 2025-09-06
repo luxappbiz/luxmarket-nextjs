@@ -3,11 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "../ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { useState, useEffect } from "react";
 import { Menu, User, LogOut } from "lucide-react";
-import { LoginDialog } from "../auth/login-dialog";
-import { tokenStorage } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
 export const Header = () => {
@@ -29,7 +33,6 @@ export const Header = () => {
         const checkAuthStatus = () => {
             const token = localStorage.getItem('lux_token');
             const userData = localStorage.getItem('user');
-
             if (token && userData) {
                 try {
                     const parsedUser = JSON.parse(userData);
@@ -109,26 +112,31 @@ export const Header = () => {
                         <div className="hidden md:flex items-center space-x-3">
                             {isLoggedIn ? (
                                 // Logged in state
-                                <div className="flex items-center space-x-3">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
                                     <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="font-semibold text-gray-700 hover:text-black"
-                                        onClick={() => router.push('/account')}
+                                      variant="outline"
+                                      size="sm"
+                                      className="font-semibold text-gray-700 hover:text-black"
                                     >
-                                        <User className="w-4 h-4 mr-2" />
-                                        {user?.display_name || user?.username || 'User'}
+                                      <User className="w-4 h-4 mr-2" />
+                                      {user?.display_name || user?.username || 'User'}
                                     </Button>
-                                    {/* <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="font-semibold text-gray-700 hover:text-red-600"
-                                        onClick={handleLogout}
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => router.push('/account')}>
+                                      <User className="w-4 h-4 mr-2" />
+                                      Account
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={handleLogout}
+                                      className="text-red-600 focus:text-red-700"
                                     >
-                                        <LogOut className="w-4 h-4 mr-2" />
-                                        Logout
-                                    </Button> */}
-                                </div>
+                                      <LogOut className="w-4 h-4 mr-2" />
+                                      Logout
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                             ) : (
                                 // Not logged in state
                                 <>
