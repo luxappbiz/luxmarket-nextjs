@@ -50,7 +50,7 @@ function ChatDetails({
     }
     setIsBlocking(true);
     try {
-      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v1/members/${currentUser.ID}/blocked`;
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/members/${currentUser.ID}/blocked`;
       await axios.put(
         url,
         { user_id_to_block: targetUserId },
@@ -89,7 +89,7 @@ function ChatDetails({
     const confirmed = window.confirm("Delete conversation?\nAre you sure you want to delete this conversation?");
     if (!confirmed) return;
     try {
-      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v1/conversations/${conversationId}`;
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/conversations/${conversationId}`;
       const response = await axios.delete(url, {
         headers: {
           Authorization: `Basic ${authToken}`

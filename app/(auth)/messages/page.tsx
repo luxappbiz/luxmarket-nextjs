@@ -1,7 +1,6 @@
 
-import { getCurrentUser } from "@/app/actions/auth";
+import { getCurrentUser, getCurrentUserAuthToken } from "@/app/actions/auth";
 import MessagesContainer from "@/components/messages/container";
-import { getCurrentUserAuthToken } from "@/lib/auth";
 
 export default async function MessagesPage() {
   const user = await getCurrentUser();

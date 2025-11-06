@@ -60,7 +60,7 @@ export default function NewConversationDialog({ authToken, user, onConversationC
       orderby = 'name';
       order = 'ASC';
     }
-    let api_url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v3/members/?orderby=${orderby}&order=${order}&timestamp=${time}&per_page=50`;
+    let api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v3/members/?orderby=${orderby}&order=${order}&timestamp=${time}&per_page=50`;
     if (search) {
       api_url += `&search=${encodeURIComponent(search)}`;
     }
@@ -97,7 +97,7 @@ export default function NewConversationDialog({ authToken, user, onConversationC
     setCreating(true);
     try {
       const userIds = [user.ID, ...selectedMembers.map(m => m.id)].join(',');
-      const api_url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v1/conversations`;
+      const api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/conversations`;
       const response = await axios.post(
         api_url,
         {

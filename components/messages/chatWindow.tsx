@@ -67,7 +67,7 @@ export default function ChatWindow({
     setLoading(true);
     const time = Date.now();
     try {
-      let api_url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v1/conversations/${selectedConversation.id}/messages?timestamp=${time}`;
+      let api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/conversations/${selectedConversation.id}/messages?timestamp=${time}`;
       if (paged) api_url += `&page=${paged}`;
       const res = await axios.get(api_url, {
         headers: { Authorization: `Basic ${authToken}` },
@@ -114,7 +114,7 @@ export default function ChatWindow({
     };
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v1/conversations/${selectedConversation.id}/messages`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/conversations/${selectedConversation.id}/messages`,
         payload,
         {
           headers: {

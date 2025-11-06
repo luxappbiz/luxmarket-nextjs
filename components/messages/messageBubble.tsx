@@ -76,7 +76,7 @@ export default function MessageBubble({ authToken, message, currentUserID, recip
 
     // ✅ Send to backend
     try {
-      const api_url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v1/conversations/${message.conversation_id}/messages/${message.id}`;
+      const api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/conversations/${message.conversation_id}/messages/${message.id}`;
       await axios.put(api_url, {
         message: message.message,
         reactions: JSON.stringify(updatedReactions),

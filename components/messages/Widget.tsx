@@ -78,7 +78,7 @@ export default function MessagesWidget({ user, authToken }: MessagesWidgetProps)
   const loadUnreadCount = async () => {
     try {
       const time = Date.now();
-      const api_url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v2/conversations?timestamp=${time}&per_page=10`;
+      const api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v2/conversations?timestamp=${time}&per_page=10`;
       const response = await axios.get(api_url, {
         headers: {
           Authorization: `Basic ${authToken}`,
@@ -103,7 +103,7 @@ export default function MessagesWidget({ user, authToken }: MessagesWidgetProps)
     setLoading(true);
     try {
       const time = Date.now();
-      const api_url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v2/conversations?timestamp=${time}&per_page=10`;
+      const api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v2/conversations?timestamp=${time}&per_page=10`;
       const response = await axios.get(api_url, {
         headers: {
           Authorization: `Basic ${authToken}`,

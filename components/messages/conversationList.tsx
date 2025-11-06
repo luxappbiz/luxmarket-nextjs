@@ -53,7 +53,7 @@ export default function ConversationList({
 
   async function getConversations(page: number = 1, perPage: number = 20): Promise<{ conversations: ConversationItem[], hasMore: boolean }> {
     const time = Date.now();
-    const api_url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v2/conversations?timestamp=${time}&paged=${page}&per_page=${perPage}`;
+    const api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/conversations?timestamp=${time}&paged=${page}&per_page=${perPage}`;
     const response = await axios.get(api_url, {
       headers: {
         Authorization: `Basic ${authToken}`,

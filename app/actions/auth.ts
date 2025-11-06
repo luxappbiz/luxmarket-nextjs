@@ -79,7 +79,7 @@ export async function getCurrentUserAuthToken(): Promise<string|null> {
 }
 
 export async function getUserAutoLoginToken() {
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v1/auto-login`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/auto-login`;
   try {
     const _getCurrentUserAuthToken = await getCurrentUserAuthToken()
     const res = await axios.post(apiUrl, null, {
@@ -105,7 +105,7 @@ export const updateUserProfileImage = async (previewImageFile: File|null) => {
   try {
     const _getCurrentUserAuthToken = await getCurrentUserAuthToken();
     const res = await axios.post(
-      process.env.NEXT_PUBLIC_API_BASE_URL + '/wp-json/app/v1/user/',
+      process.env.NEXT_PUBLIC_BASE_URL + '/wp-json/app/v1/user/',
       formData,
       {
         headers: {

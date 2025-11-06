@@ -47,7 +47,7 @@ export default function SelectMemberDialog({ authToken, setSelectedUserIDToChat 
 
   const getMembers = () => {
     const time = Date.now();
-    let api_url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/wp-json/lux/v3/members/?orderby=featured&timestamp=${time}`
+    let api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v3/members/?orderby=featured&timestamp=${time}`
     if (search) {
       api_url += `&search=${search}` 
     }
