@@ -14,7 +14,7 @@ export async function loginAction({
   const cookieStore = await cookies();
 
   // Set secure, HttpOnly auth_token
-  cookieStore.set("auth_token", token, {
+  cookieStore.set("lux_token", token, {
     path: "/",
     maxAge: 60 * 60 * 24 * 30, // 30 days
     secure: true,
@@ -24,7 +24,7 @@ export async function loginAction({
 
   // (Optional) If you need some safe client-accessible info
   if (user) {
-    cookieStore.set("user_info", JSON.stringify(user), {
+    cookieStore.set("user", JSON.stringify(user), {
       path: "/",
       maxAge: 60 * 60 * 24 * 30,
       secure: true,
@@ -38,20 +38,20 @@ export async function loginAction({
 
 export async function logout() {
   const cookieStore = await cookies();
-  cookieStore.delete('auth_token')
-  cookieStore.delete('user_info')
+  cookieStore.delete('lux_token')
+  cookieStore.delete('user')
   return redirect('/login'); 
 }
 
 export async function getCurrentUser(): Promise<UserProps> {
   const cookieStore = await cookies();
-  const user_info = cookieStore.get('user_info')?.value || '{}';
-  return JSON.parse(user_info) as UserProps;
+  const user = cookieStore.get('user')?.value || '{}';
+  return JSON.parse(user) as UserProps;
 }
 
 export async function setUser(user: UserProps) {
   const cookieStore = await cookies();
-  cookieStore.set("user_info", JSON.stringify(user), {
+  cookieStore.set("user", JSON.stringify(user), {
     path: "/",
     maxAge: 60 * 60 * 24 * 30,
     secure: true,
@@ -62,7 +62,7 @@ export async function setUser(user: UserProps) {
 
 export async function getCurrentUserToken(): Promise<string | undefined> {
   const cookieStore = await cookies();
-  return cookieStore.get("auth_token")?.value;
+  return cookieStore.get("lux_token")?.value;
 }
 
 export async function getCurrentUserAuthToken(): Promise<string|null> {

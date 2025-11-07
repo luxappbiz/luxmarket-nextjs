@@ -59,6 +59,7 @@ export default function ConversationList({
         Authorization: `Basic ${authToken}`,
       },
     });
+    console.log('authToken', authToken)
     const allConversations: ConversationItem[] = response.data.conversations;
     const filteredConversations = allConversations.filter(convo => convo.id !== 123); // filter unwanted convo
     const pagination = response.data.pagination;
