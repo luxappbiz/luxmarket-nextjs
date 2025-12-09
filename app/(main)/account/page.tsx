@@ -23,6 +23,7 @@ import {
 import { useUser } from '@/contexts/UserContext';
 import CreateProductTab from '@/components/account/CreateProductTab';
 import Memberships from '@/components/account/Memberships';
+import { ExploreItems } from '@/components/home/explore-items';
 
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState('account');
@@ -392,13 +393,11 @@ export default function AccountPage() {
           </div>
         </div>
       </section>
-
       {/* Bottom CTA Section */}
-      <section className="relative py-16 bg-gray-800 text-white">
+      {/* <section className="relative py-16 bg-gray-800 text-white">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[url('/images/cars/koenigsegg-ccgt.jpg')] bg-cover bg-center"></div>
         </div>
-
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -417,7 +416,8 @@ export default function AccountPage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
+      <ExploreItems />
     </div>
   );
 }

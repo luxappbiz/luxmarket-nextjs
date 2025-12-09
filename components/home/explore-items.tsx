@@ -4,12 +4,23 @@ import Link from 'next/link'
 export function ExploreItems() {
     return (
         <section className="relative py-20 bg-gray-800 text-white overflow-hidden border-b border-gray-700">
-            {/* Background Image */}
-            <div className="absolute inset-0 opacity-20">
-                <div className="absolute inset-0 bg-[url('/luxury-car-bg.jpg')] bg-cover bg-center"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800/90 to-gray-800/70"></div>
+            {/* Background Video */}
+            <div className="absolute inset-0">
+                <video
+                    className="absolute inset-0 w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    poster="/images/bugatti-smoke.jpg"
+                >
+                    <source src="/videos/bugatti-smoke.mp4" type="video/mp4" />
+                </video>
+                <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-black/70"
+                ></div>
             </div>
-
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="max-w-3xl">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 font-serif">
