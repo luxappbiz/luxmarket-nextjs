@@ -180,7 +180,6 @@ export default function CreateProductTab() {
               onChange={handleThumbnailSelect}
               className="hidden"
             />
-            
             {thumbnailPreview ? (
               <div className="relative">
                 <img 
@@ -210,10 +209,9 @@ export default function CreateProductTab() {
               </Button>
             )}
           </div>
-
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="name">Product Name *</Label>
               <Input
                 id="name"
@@ -222,8 +220,8 @@ export default function CreateProductTab() {
                 placeholder="Enter product name"
               />
             </div>
-            <div>
-              <Label htmlFor="price">Price (USD) *</Label>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="price">Price (USD)*</Label>
               <Input
                 id="price"
                 type="number"
@@ -233,9 +231,8 @@ export default function CreateProductTab() {
               />
             </div>
           </div>
-
           {/* Category */}
-          <div>
+          <div className="flex flex-col gap-2">
             <Label>Category *</Label>
             <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
               <SelectTrigger>
@@ -250,7 +247,6 @@ export default function CreateProductTab() {
               </SelectContent>
             </Select>
           </div>
-
           {/* Vehicle-specific fields */}
           {formData.category === '32' && (
             <>
@@ -280,7 +276,6 @@ export default function CreateProductTab() {
                   />
                 </div>
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="model">Model</Label>
