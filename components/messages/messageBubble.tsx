@@ -152,7 +152,7 @@ export default function MessageBubble({ authToken, message, currentUserID, recip
         className={`relative max-w-sm md:max-w-md px-4 py-2 rounded-lg text-sm ${
           isMe
             ? 'bg-[#3797f0] text-white rounded-br-none'
-            : 'bg-muted text-white rounded-bl-none'
+            : 'bg-muted rounded-bl-none'
         }`}
       >
         <span>{message.message}</span>

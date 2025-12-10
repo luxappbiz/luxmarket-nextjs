@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import ChatWindow from "./chatWindow";
-import ConversationList from "./conversationList";
+import ChatWindow from "@/components/messages/chatWindow";
+import ConversationList from "@/components/messages/conversationList";
 import { UserProps } from "@/types/user";
 import { ConversationItem } from "@/types/messages";
 import ChatDetails from "@/components/messages/chatDetails";
@@ -35,7 +35,7 @@ export default function MessagesContainer({ user, authToken }: MessagesContainer
           />
         </div>
       )}
-      {/* {(!isMobile || (isMobile && selectedConversation)) && (
+      {(!isMobile || (isMobile && selectedConversation)) && (
         <div className="flex-1 p-4 bg-background flex flex-col h-full">
           {selectedConversation ? (
             <div className="flex flex-row h-full">
@@ -56,12 +56,10 @@ export default function MessagesContainer({ user, authToken }: MessagesContainer
               )}
             </div>
           ) : (
-            <div className="hidden lg:flex items-center justify-center text-muted-foreground h-full">
-              Select a conversation to start a messages chat.
-            </div>
+            <div className="hidden lg:flex items-center justify-center text-muted-foreground h-full">Select a conversation to start a messages chat.</div>
           )}
         </div>
-      )} */}
+      )}
     </div>
   );
 }

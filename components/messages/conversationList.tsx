@@ -26,7 +26,6 @@ export default function ConversationList({
   selectedConversation,
   onSelect,
 }: ConversationListProps) {
-  console.log('ConversationList user', user);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -37,10 +36,8 @@ export default function ConversationList({
 
   useEffect(() => {
     if (!authToken) {
-      console.log('ConversationList authToken is null, waiting...');
       return;
     }
-    console.log('ConversationList authToken', authToken);
     setLoading(true);
     getConversations(1)
       .then((data) => {
@@ -64,8 +61,6 @@ export default function ConversationList({
     }
     const time = Date.now();
     const api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/conversations?timestamp=${time}&paged=${page}&per_page=${perPage}`;
-    console.log('getConversations', api_url);
-    console.log('authToken', authToken);
     const response = await axios.get(api_url, {
       headers: {
         // Authorization: `Basic ${btoa(`${user.user_login}:${authToken}`)}`,
@@ -75,7 +70,6 @@ export default function ConversationList({
     const allConversations: ConversationItem[] = response.data.conversations;
     const filteredConversations = allConversations.filter(convo => convo.id !== 123); // filter unwanted convo
     const pagination = response.data.pagination;
-    console.log('pagination', pagination);
     const hasMore = pagination ? pagination.current_page < pagination.total_pages : false;
     return { conversations: filteredConversations, hasMore };
   }
