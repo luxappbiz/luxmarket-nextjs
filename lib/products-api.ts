@@ -1,4 +1,3 @@
-// lib/products-api.ts
 import axios from 'axios';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -86,7 +85,6 @@ export const mapWooCommerceProduct = (wcProduct: WooCommerceProduct): Product =>
   // Determine category based on WooCommerce categories
   const getCategoryFromWC = (categories: WooCommerceProduct['categories']): Product['category'] => {
     const categoryName = categories[0]?.name?.toLowerCase() || '';
-    
     if (categoryName.includes('vehicle')) return 'vehicles';
     if (categoryName.includes('real estate') || categoryName.includes('property')) return 'real-estate';
     if (categoryName.includes('watch') || categoryName.includes('timepiece')) return 'watches';
@@ -106,7 +104,6 @@ export const mapWooCommerceProduct = (wcProduct: WooCommerceProduct): Product =>
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
     if (diffDays === 1) return '1 day ago';
     if (diffDays < 7) return `${diffDays} days ago`;
     if (diffDays < 30) return `${Math.ceil(diffDays / 7)} week${Math.ceil(diffDays / 7) > 1 ? 's' : ''} ago`;
@@ -174,7 +171,6 @@ export const productsService = {
         order = 'desc',
         status = 'publish'
       } = params;
-
       const queryParams = new URLSearchParams({
         page: page.toString(),
         per_page: per_page.toString(),
@@ -182,23 +178,17 @@ export const productsService = {
         order,
         status,
       });
-
       if (category && category !== 'all') {
         queryParams.append('category', category);
       }
-
       if (search) {
         queryParams.append('search', search);
       }
-
       const response = await productsApi.get(`/products?${queryParams.toString()}`);
-      
       const products: Product[] = response.data.map(mapWooCommerceProduct);
-      
       // Get total count from headers
       const totalCount = parseInt(response.headers['x-wp-total'] || '0');
       const totalPages = parseInt(response.headers['x-wp-totalpages'] || '1');
-
       return {
         products,
         totalCount,
@@ -209,7 +199,6 @@ export const productsService = {
       throw new Error('Failed to fetch products');
     }
   },
-
   // Get single product
   getProduct: async (id: string): Promise<Product> => {
     try {
@@ -220,7 +209,6 @@ export const productsService = {
       throw new Error('Failed to fetch product');
     }
   },
-
   // Get categories
   getCategories: async () => {
     try {

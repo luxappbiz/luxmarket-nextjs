@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-
 import Link from 'next/link'
 import MobileScreensImgCarousel from '@/components/MobileScreensCarousel'
 import Image from 'next/image';
@@ -20,7 +19,7 @@ export function HeroSection() {
         <section className="relative py-16 md:py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center overflow-hidden">
             {/* background */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-[url('/images/car-garage-white-cars.avif')] bg-cover bg-center bg-no-repeat"></div>
+                <div className="absolute inset-0 bg-[url('/images/white-cars-garage.jpg')] bg-cover bg-center bg-no-repeat"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
             </div>
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -63,7 +62,7 @@ export function HeroSection() {
                                     </span>
                                 </p>
                             </div>
-                            <div className="pt-6">
+                            <div>
                                 <p className="text-sm text-gray-300 mb-3">Available on App Store</p>
                                 <Link
                                     href="https://apps.apple.com/us/app/my-lux-market/id6738446545"
