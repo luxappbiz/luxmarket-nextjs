@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
-import { Menu, User, LogOut, MessageCircle } from "lucide-react";
+import { Menu, User, LogOut, MessageCircle, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -88,6 +88,10 @@ export const Header = () => {
                                     <DropdownMenuItem onClick={() => router.push('/account')}>
                                       <User className="w-4 h-4 mr-2" />
                                       Account
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => router.push('/create')}>
+                                      <Package className="w-4 h-4 mr-2" />
+                                      Create Product
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => router.push('/messages')}>
                                       <MessageCircle className="w-4 h-4 mr-2" />
