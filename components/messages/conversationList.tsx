@@ -35,6 +35,12 @@ export default function ConversationList({
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    if (!authToken) {
+      console.log('ConversationList authToken is null, waiting...');
+      return;
+    }
+    console.log('ConversationList authToken', authToken);
+    setLoading(true);
     getConversations(1)
       .then((data) => {
         setConversations(data.conversations);
@@ -42,7 +48,7 @@ export default function ConversationList({
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [authToken]);
 
   useEffect(() => {
     const chatWith = searchParams.get("chatWith");
@@ -52,14 +58,18 @@ export default function ConversationList({
   }, [searchParams]);
 
   async function getConversations(page: number = 1, perPage: number = 20): Promise<{ conversations: ConversationItem[], hasMore: boolean }> {
+    if (!authToken) {
+      throw new Error('Auth token is required to fetch conversations');
+    }
     const time = Date.now();
     const api_url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/conversations?timestamp=${time}&paged=${page}&per_page=${perPage}`;
+    console.log('getConversations', api_url);
+    console.log('authToken', authToken);
     const response = await axios.get(api_url, {
       headers: {
         Authorization: `Basic ${authToken}`,
       },
     });
-    console.log('authToken', authToken)
     const allConversations: ConversationItem[] = response.data.conversations;
     const filteredConversations = allConversations.filter(convo => convo.id !== 123); // filter unwanted convo
     const pagination = response.data.pagination;

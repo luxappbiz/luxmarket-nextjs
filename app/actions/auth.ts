@@ -12,16 +12,14 @@ export async function loginAction({
   user?: UserProps;  // Use UserProps instead of any or Record
 }) {
   const cookieStore = await cookies();
-
   // Set secure, HttpOnly auth_token
-  cookieStore.set("lux_token", token, {
+  cookieStore.set("lux_auth_token", token, {
     path: "/",
     maxAge: 60 * 60 * 24 * 30, // 30 days
     secure: true,
     httpOnly: true, // can't be read by JavaScript
     sameSite: "lax",
   });
-
   // (Optional) If you need some safe client-accessible info
   if (user) {
     cookieStore.set("user", JSON.stringify(user), {
@@ -32,13 +30,12 @@ export async function loginAction({
       sameSite: "lax",
     });
   }
-
   return { success: true };
 }
 
 export async function logout() {
   const cookieStore = await cookies();
-  cookieStore.delete('lux_token')
+  cookieStore.delete('lux_auth_token')
   cookieStore.delete('user')
   return redirect('/login'); 
 }
@@ -62,7 +59,7 @@ export async function setUser(user: UserProps) {
 
 export async function getCurrentUserToken(): Promise<string | undefined> {
   const cookieStore = await cookies();
-  return cookieStore.get("lux_token")?.value;
+  return cookieStore.get("lux_auth_token")?.value;
 }
 
 export async function getCurrentUserAuthToken(): Promise<string|null> {

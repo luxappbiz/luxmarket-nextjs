@@ -27,6 +27,7 @@ function ChatDetails({
   const router = useRouter()
 
   console.log('currentUser', currentUser);
+  console.log('authToken', authToken);
 
   // Open the confirm dialog (keeps your button onClick the same name)
   const handleBlock = () => {

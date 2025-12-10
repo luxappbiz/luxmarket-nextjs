@@ -15,7 +15,7 @@ export default function MessagesContainer({ user, authToken }: MessagesContainer
   const [selectedConversation, setSelectedConversation] = useState<ConversationItem | null>(null);
   const [showChatDetails, setShowChatDetails] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  // Detect mobile
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     handleResize();
@@ -35,7 +35,7 @@ export default function MessagesContainer({ user, authToken }: MessagesContainer
           />
         </div>
       )}
-      {(!isMobile || (isMobile && selectedConversation)) && (
+      {/* {(!isMobile || (isMobile && selectedConversation)) && (
         <div className="flex-1 p-4 bg-background flex flex-col h-full">
           {selectedConversation ? (
             <div className="flex flex-row h-full">
@@ -61,7 +61,7 @@ export default function MessagesContainer({ user, authToken }: MessagesContainer
             </div>
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

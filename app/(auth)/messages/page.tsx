@@ -5,6 +5,8 @@ import MessagesContainer from "@/components/messages/container";
 export default async function MessagesPage() {
   const user = await getCurrentUser();
   const authToken = await getCurrentUserAuthToken();
+  console.log('MessagesPage authToken', authToken);
+
   return (
     <>
       <div className="flex"> 

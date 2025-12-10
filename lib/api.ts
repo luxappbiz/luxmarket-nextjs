@@ -80,38 +80,36 @@ export const tokenStorage = {
   setToken: (token: string, rememberMe: boolean = false) => {
     if (typeof window !== 'undefined') {
       // Store in localStorage
-      localStorage.setItem('lux_token', token);
-      
+      localStorage.setItem('lux_auth_token', token);
       // Store in cookies for middleware
       const days = rememberMe ? 30 : 1; // 30 days if remember me, 1 day otherwise
-      cookieUtils.setCookie('auth_token', token, days);
+      cookieUtils.setCookie('lux_auth_token', token, days);
     }
   },
-
   getToken: () => {
     if (typeof window !== 'undefined') {
       // Try localStorage first, then cookies
-      return localStorage.getItem('lux_token') || cookieUtils.getCookie('auth_token');
+      return localStorage.getItem('lux_auth_token') || cookieUtils.getCookie('lux_auth_token');
     }
     return null;
   },
 
   removeToken: () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('lux_token');
-      cookieUtils.deleteCookie('auth_token');
+      localStorage.removeItem('lux_auth_token');
+      cookieUtils.deleteCookie('lux_auth_token');
     }
   },
 
   setUser: (user: any) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('lux_user', JSON.stringify(user));
+      localStorage.setItem('lux_auth_token', JSON.stringify(user));
     }
   },
 
   getUser: () => {
     if (typeof window !== 'undefined') {
-      const user = localStorage.getItem('lux_user');
+      const user = localStorage.getItem('lux_auth_token');
       return user ? JSON.parse(user) : null;
     }
     return null;
@@ -119,17 +117,17 @@ export const tokenStorage = {
 
   removeUser: () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('lux_user');
+      localStorage.removeItem('lux_auth_token');
     }
   },
 
   // Clear all auth data
   clearAll: () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('lux_token');
+      localStorage.removeItem('lux_auth_token');
       localStorage.removeItem('lux_user');
       localStorage.removeItem('lux_app_password');
-      cookieUtils.deleteCookie('auth_token');
+      cookieUtils.deleteCookie('lux_auth_token');
     }
   }
 };
@@ -142,22 +140,18 @@ export const authUtils = {
     const user = tokenStorage.getUser();
     return !!(token && user);
   },
-
   // Get current user
   getCurrentUser: () => {
     return tokenStorage.getUser();
   },
-
   // Get current token
   getToken: () => {
     return tokenStorage.getToken();
   },
-
   // Set user data
   setUser: (user: any) => {
     tokenStorage.setUser(user);
   },
-
   // Logout user
   logout: () => {
     tokenStorage.clearAll();
@@ -166,6 +160,4 @@ export const authUtils = {
       window.dispatchEvent(new Event('authStateChanged'));
     }
   },
-
-
 };

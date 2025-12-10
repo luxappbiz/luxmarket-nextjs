@@ -69,7 +69,7 @@ export const Header = () => {
         localStorage.removeItem('lux_token');
         localStorage.removeItem('user');
         localStorage.removeItem('lux_app_password');
-        document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'lux_auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         setIsLoggedIn(false);
         setUser(null);
         window.dispatchEvent(new Event('authStateChanged'));
