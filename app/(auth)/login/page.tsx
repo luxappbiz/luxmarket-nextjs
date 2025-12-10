@@ -1,64 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Check, Loader2, Mail, Lock } from 'lucide-react';
-import { authApi } from '@/lib/api';
-import { useUser } from '@/contexts/UserContext';
+import { Check } from 'lucide-react';
+import LoginForm from '@/components/auth/LoginForm';
 
 export default function LoginPage() {
-    const router = useRouter();
-    const { login } = useUser();
-    const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [formData, setFormData] = useState({
-        login: '',
-        password: '',
-        rememberMe: false
-    });
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        if (!formData.login || !formData.password) {
-            setError('Please fill in all fields');
-            return;
-        }
-        setIsLoading(true);
-        try {
-            const response = await authApi.login(formData.login, formData.password);
-            if (response.success) {
-                login(
-                    response.token,
-                    response.user,
-                    formData.rememberMe,
-                    response.application_password
-                );
-                router.push('/account');
-            } else {
-                setError(response.error || 'Login failed');
-            }
-        } catch (err: any) {
-            setError(err.message || 'An error occurred during login');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value
-        });
-        if (error) setError('');
-    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -76,105 +23,7 @@ export default function LoginPage() {
                                 <div className="md:w-3/5 p-8 md:p-12">
                                     <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
                                     <p className="text-gray-600 mb-8">Log in to your LUX account</p>
-                                    {error && (
-                                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                                            <p className="text-sm text-red-600">{error}</p>
-                                        </div>
-                                    )}
-                                    <form onSubmit={handleSubmit} className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="login">Email or Username</Label>
-                                            <div className="relative">
-                                                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                                <Input
-                                                    id="login"
-                                                    name="login"
-                                                    type="text"
-                                                    placeholder="john@example.com or johndoe"
-                                                    value={formData.login}
-                                                    onChange={handleChange}
-                                                    className="h-11 pl-10"
-                                                    required
-                                                    disabled={isLoading}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <Label htmlFor="password">Password</Label>
-                                                <Link
-                                                    href="/lost-pass"
-                                                    className="text-sm text-gray-600 hover:text-black transition-colors"
-                                                >
-                                                    Forgot password?
-                                                </Link>
-                                            </div>
-                                            <div className="relative">
-                                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                                <Input
-                                                    id="password"
-                                                    name="password"
-                                                    type={showPassword ? 'text' : 'password'}
-                                                    placeholder="Enter your password"
-                                                    value={formData.password}
-                                                    onChange={handleChange}
-                                                    className="h-11 pl-10 pr-10"
-                                                    required
-                                                    disabled={isLoading}
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                                                    onClick={() => setShowPassword(!showPassword)}
-                                                    disabled={isLoading}
-                                                >
-                                                    {showPassword ? (
-                                                        <EyeOff className="h-4 w-4 text-gray-500" />
-                                                    ) : (
-                                                        <Eye className="h-4 w-4 text-gray-500" />
-                                                    )}
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <input
-                                                type="checkbox"
-                                                id="rememberMe"
-                                                name="rememberMe"
-                                                checked={formData.rememberMe}
-                                                onChange={handleChange}
-                                                className="h-4 w-4 text-black border-gray-300 rounded focus:ring-black"
-                                                disabled={isLoading}
-                                            />
-                                            <Label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
-                                                Remember me for 30 days
-                                            </Label>
-                                        </div>
-                                        <Button
-                                            type="submit"
-                                            className="w-full h-12 bg-black hover:bg-gray-900 text-white font-medium"
-                                            disabled={isLoading}
-                                        >
-                                            {isLoading ? (
-                                                <>
-                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                    Signing In...
-                                                </>
-                                            ) : (
-                                                'Sign In'
-                                            )}
-                                        </Button>
-
-                                        <p className="text-center text-sm text-gray-600 pt-2">
-                                            Don't have an account?{' '}
-                                            <Link href="/join" className="font-semibold text-black hover:underline">
-                                                Create an account
-                                            </Link>
-                                        </p>
-                                    </form>
+                                    <LoginForm />
                                 </div>
                                 <div className="md:w-2/5 bg-zinc-900 p-8 md:p-12 text-white">
                                     <h3 className="text-2xl font-bold mb-6">Welcome to LUX</h3>
@@ -207,7 +56,6 @@ export default function LoginPage() {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="mt-8 pt-8 border-t border-gray-800">
                                         <p className="text-sm text-gray-400 mb-4">Download our mobile app</p>
                                         <Link

@@ -5,31 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useRouter } from 'next/navigation';
-import {
-  User,
-  Package,
-  CreditCard,
-  MapPin,
-  Settings,
-  LogOut,
-  Edit3,
-  Mail,
-  Phone,
-  Calendar,
-  Shield,
-  Bell
-} from 'lucide-react';
+import { User, Package, CreditCard, MapPin, Settings, Edit3, Shield } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import CreateProductTab from '@/components/account/CreateProductTab';
 import Memberships from '@/components/account/Memberships';
 import { ExploreItems } from '@/components/home/explore-items';
+import AccountSidebar from '@/components/account/Sidebar';
 
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState('account');
   const [isEditing, setIsEditing] = useState(false);
-  const { user, logout, updateUser } = useUser();
-  const router = useRouter();
+  const { user, logout } = useUser();
 
   // Handle case where user is not loaded yet
   if (!user) {
@@ -83,7 +69,7 @@ export default function AccountPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
+                  <div className="flex flex-col gap-2">
                     <Label htmlFor="name">Full Name</Label>
                     <Input
                       id="name"
@@ -97,7 +83,7 @@ export default function AccountPage() {
                       className={!isEditing ? 'bg-gray-50' : ''}
                     />
                   </div>
-                  <div>
+                  <div className="flex flex-col gap-2">
                     <Label htmlFor="email">Email Address</Label>
                     <Input
                       id="email"
@@ -111,7 +97,7 @@ export default function AccountPage() {
                       className={!isEditing ? 'bg-gray-50' : ''}
                     />
                   </div>
-                  <div>
+                  <div className="flex flex-col gap-2">
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input
                       id="phone"
@@ -126,7 +112,7 @@ export default function AccountPage() {
                       placeholder="Add phone number"
                     />
                   </div>
-                  <div>
+                  <div className="flex flex-col gap-2">
                     <Label htmlFor="member-since">Member Since</Label>
                     <Input
                       id="member-since"
@@ -311,81 +297,18 @@ export default function AccountPage() {
           </div>
         </div>
       </section>
-
       {/* Main Content */}
       <section className="py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Sidebar Navigation */}
-            <div className="lg:col-span-1">
-              <Card>
-                <CardHeader className="pb-4">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-3">
-                      <User className="h-8 w-8 text-white" />
-                    </div>
-                    <h2 className="font-semibold text-lg">Welcome, {userData.name}</h2>
-                    <p className="text-gray-600 text-sm">{userData.membershipType} Member</p>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <nav className="space-y-1">
-                    {navigationItems.map((item) => {
-                      const Icon = item.icon;
-                      const isActive = activeTab === item.id;
-                      const isLogout = item.id === 'logout';
-
-                      return (
-                        <button
-                          key={item.id}
-                          onClick={() => setActiveTab(item.id)}
-                          className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${isActive
-                            ? 'bg-black text-white'
-                            : isLogout
-                              ? 'text-red-600 hover:bg-red-50'
-                              : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span className="font-medium">{item.label}</span>
-                        </button>
-                      );
-                    })}
-                  </nav>
-                </CardContent>
-              </Card>
-
-              {/* Account Info Card */}
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle className="text-lg">My Settings</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-1">Account Info</h3>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      <p>{userData.name}</p>
-                      <p>{userData.email}</p>
-                    </div>
-                    <Button variant="link" size="sm" className="p-0 h-auto mt-2 text-blue-600">
-                      Edit
-                    </Button>
-                  </div>
-
-                  <div className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-1">Primary Shipping Address</h3>
-                    <div className="text-sm text-gray-600">
-                      <p>123 Luxury Street</p>
-                      <p>Karachi, Sindh</p>
-                    </div>
-                    <Button variant="link" size="sm" className="p-0 h-auto mt-2 text-blue-600">
-                      Edit
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
+            <AccountSidebar
+                userData={userData}
+                navigationItems={navigationItems}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                onLogout={logout}
+            />
             {/* Main Content Area */}
             <div className="lg:col-span-3">
               {renderContent()}

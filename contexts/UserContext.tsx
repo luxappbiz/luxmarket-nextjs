@@ -100,7 +100,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     loadUser();
 
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'user') {
+      if (e.key === 'lux_user') {
         if (e.newValue) {
           try {
             const userData = JSON.parse(e.newValue);
@@ -133,7 +133,7 @@ const login = (token: string, userData: User, rememberMe = false, appPassword?: 
   const days = rememberMe ? 30 : 1;
   const expires = new Date();
   expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-  document.cookie = `auth_token=${token};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+  document.cookie = `lux_auth_token=${token};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
 
   window.dispatchEvent(new Event('authStateChanged'));
 };
@@ -148,7 +148,7 @@ const logout = () => {
   
   // Clear cookies
   document.cookie = 'user_info=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  document.cookie = 'lux_auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
   window.dispatchEvent(new Event('authStateChanged'));
 };

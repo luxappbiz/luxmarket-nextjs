@@ -157,7 +157,7 @@ export default function CategoryContainer({
   useEffect(() => {
       const checkAuthStatus = () => {
           const token = localStorage.getItem('lux_token');
-          const userData = localStorage.getItem('user');
+          const userData = localStorage.getItem('lux_user');
           if (token && userData) {
               try {
                   const parsedUser = JSON.parse(userData);

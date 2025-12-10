@@ -32,15 +32,13 @@ export async function loginAction({
   appPassword?: string;
 }) {
   const cookieStore = await cookies();
-
-  cookieStore.set("auth_token", token, {
+  cookieStore.set("lux_auth_token", token, {
     path: "/",
     maxAge: 60 * 60 * 24 * 30, // 30 days
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,  
     sameSite: "lax",
   });
-
   if (appPassword) {
     cookieStore.set("app_password", appPassword, {
       path: "/",
@@ -50,7 +48,6 @@ export async function loginAction({
       sameSite: "lax",
     });
   }
-
   if (user) {
     cookieStore.set("user_info", JSON.stringify(user), {
       path: "/",
@@ -60,13 +57,12 @@ export async function loginAction({
       sameSite: "lax",
     });
   }
-
   return { success: true };
 }
 
 export async function logout() {
   const cookieStore = await cookies();
-  cookieStore.delete('auth_token');
+  cookieStore.delete('lux_auth_token');
   cookieStore.delete('app_password');
   cookieStore.delete('user_info');
   return redirect('/login'); 
@@ -75,7 +71,6 @@ export async function logout() {
 export async function getCurrentUser(): Promise<User | null> {
   const cookieStore = await cookies();
   const user_info = cookieStore.get('user_info')?.value;
-  
   if (user_info) {
     try {
       return JSON.parse(user_info) as User;
@@ -83,10 +78,9 @@ export async function getCurrentUser(): Promise<User | null> {
       // Continue to check localStorage if cookie parsing fails
     }
   }
-  
   // Fallback to check if we can get user from localStorage (for migration)
   if (typeof window !== 'undefined') {
-    const localUser = localStorage.getItem('lux_user') || localStorage.getItem('user');
+    const localUser = localStorage.getItem('lux_user');
     if (localUser) {
       try {
         return JSON.parse(localUser) as User;
@@ -95,7 +89,6 @@ export async function getCurrentUser(): Promise<User | null> {
       }
     }
   }
-  
   return null;
 }
 
@@ -112,12 +105,10 @@ export async function setUser(user: User) {
 
 export async function getCurrentUserToken(): Promise<string | undefined> {
   const cookieStore = await cookies();
-  let token = cookieStore.get("auth_token")?.value;
-  
+  let token = cookieStore.get("lux_auth_token")?.value;
   if (!token && typeof window !== 'undefined') {
-    token = localStorage.getItem('lux_token') || localStorage.getItem('auth_token') || undefined;
+    token = localStorage.getItem('lux_auth_token') || localStorage.getItem('lux_auth_token') || undefined;
   }
-  
   return token;
 }
 
@@ -130,24 +121,20 @@ export async function getCurrentUserAuthToken(): Promise<string> {
   const authToken = await getCurrentUserToken();
   const appPassword = await getCurrentUserAppPassword();
   const user = await getCurrentUser();
-
   const password = appPassword || authToken || "";
   const userLogin = user?.user_login || "";
-  
   return btoa(`${userLogin}:${password}`);
 }
 
 export async function getLuxUserAuth(): Promise<{ userLogin: string; appPassword: string } | null> {
   const user = await getCurrentUser();
   let appPassword = await getCurrentUserAppPassword();
-  
   if (!appPassword && typeof window !== 'undefined') {
     const localAppPassword = localStorage.getItem('lux_app_password');
     if (localAppPassword) {
       appPassword = localAppPassword;
     }
   }
-  
   // If still no app password, use the token as fallback
   if (!appPassword) {
     const token = await getCurrentUserToken();
@@ -155,11 +142,9 @@ export async function getLuxUserAuth(): Promise<{ userLogin: string; appPassword
       appPassword = token;
     }
   }
-  
   if (!user?.user_login || !appPassword) {
     return null;
   }
-  
   return {
     userLogin: user.user_login,
     appPassword: appPassword
