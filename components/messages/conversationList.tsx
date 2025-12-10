@@ -68,7 +68,8 @@ export default function ConversationList({
     console.log('authToken', authToken);
     const response = await axios.get(api_url, {
       headers: {
-        Authorization: `Basic ${btoa(`${user.user_login}:${authToken}`)}`,
+        // Authorization: `Basic ${btoa(`${user.user_login}:${authToken}`)}`,
+        Authorization: `Basic ${authToken}`,
       },
     });
     const allConversations: ConversationItem[] = response.data.conversations;

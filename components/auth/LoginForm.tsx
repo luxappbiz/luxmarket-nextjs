@@ -8,7 +8,7 @@ import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { authApi } from '@/lib/api';
 import { useUser } from '@/contexts/UserContext';
-import { setUser } from '@/lib/auth';
+import { setUser } from '@/app/actions/auth';
 // import { useRouter } from 'next/router';
 
 const LoginForm = () => {

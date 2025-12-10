@@ -2,14 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "../ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState, useEffect } from "react";
 import { Menu, User, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,14 +23,28 @@ export const Header = () => {
         { name: "Plans", href: "/membership" },
     ];
 
-    // Check authentication status on component mount and when localStorage changes
+    // Helper function to get cookie value
+    const getCookie = (name: string): string | null => {
+        if (typeof document === 'undefined') return null;
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return parts.pop()?.split(';').shift() || null;
+        }
+        return null;
+    };
+
+    // Check authentication status on component mount and when cookies change
     useEffect(() => {
         const checkAuthStatus = () => {
-            const token = localStorage.getItem('lux_token');
-            const userData = localStorage.getItem('lux_user');
-            if (token && userData) {
+            // lux_auth_token is httpOnly, so we can't read it from JavaScript
+            // We only check lux_user which is accessible to JavaScript
+            const userData = getCookie('lux_user');
+            if (userData) {
                 try {
-                    const parsedUser = JSON.parse(userData);
+                    // Decode URL-encoded cookie value before parsing
+                    const decodedUserData = decodeURIComponent(userData);
+                    const parsedUser = JSON.parse(decodedUserData);
                     setIsLoggedIn(true);
                     setUser(parsedUser);
                 } catch (error) {
@@ -50,26 +59,26 @@ export const Header = () => {
         };
         // Initial check
         checkAuthStatus();
-        const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'lux_token' || e.key === 'lux_user') { // Changed from tokenStorage keys
-                checkAuthStatus();
-            }
-        };
-        window.addEventListener('storage', handleStorageChange);
         // Custom event for same-tab login/logout
         const handleAuthChange = () => checkAuthStatus();
         window.addEventListener('authStateChanged', handleAuthChange);
+        // Poll for cookie changes (since cookies don't trigger storage events)
+        const interval = setInterval(checkAuthStatus, 1000);
         return () => {
-            window.removeEventListener('storage', handleStorageChange);
             window.removeEventListener('authStateChanged', handleAuthChange);
+            clearInterval(interval);
         };
     }, []);
 
     const handleLogout = () => {
+        // Clear localStorage (for backward compatibility)
         localStorage.removeItem('lux_token');
         localStorage.removeItem('lux_user');
         localStorage.removeItem('lux_app_password');
-        document.cookie = 'lux_auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        // Clear cookies
+        document.cookie = 'lux_auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax;';
+        document.cookie = 'lux_user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax;';
+        document.cookie = 'app_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax;';
         setIsLoggedIn(false);
         setUser(null);
         window.dispatchEvent(new Event('authStateChanged'));
