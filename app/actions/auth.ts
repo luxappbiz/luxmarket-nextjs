@@ -22,7 +22,7 @@ export async function loginAction({
   });
   // (Optional) If you need some safe client-accessible info
   if (user) {
-    cookieStore.set("user", JSON.stringify(user), {
+    cookieStore.set("lux_user", JSON.stringify(user), {
       path: "/",
       maxAge: 60 * 60 * 24 * 30,
       secure: true,
@@ -36,19 +36,19 @@ export async function loginAction({
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete('lux_auth_token')
-  cookieStore.delete('user')
+  cookieStore.delete('lux_user')
   return redirect('/login'); 
 }
 
 export async function getCurrentUser(): Promise<UserProps> {
   const cookieStore = await cookies();
-  const user = cookieStore.get('user')?.value || '{}';
+  const user = cookieStore.get('lux_user')?.value || '{}';
   return JSON.parse(user) as UserProps;
 }
 
 export async function setUser(user: UserProps) {
   const cookieStore = await cookies();
-  cookieStore.set("user", JSON.stringify(user), {
+  cookieStore.set("lux_user", JSON.stringify(user), {
     path: "/",
     maxAge: 60 * 60 * 24 * 30,
     secure: true,

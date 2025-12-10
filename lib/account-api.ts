@@ -49,19 +49,16 @@ export const accountService = {
     try {
       // Try server-side auth first
       let userAuth = await getLuxUserAuth();
-      
       // If server-side auth fails, try client-side fallback
       if (!userAuth && typeof window !== 'undefined') {
-        const user = localStorage.getItem('lux_user') || localStorage.getItem('user');
+        const user = localStorage.getItem('lux_user');
         const appPassword = localStorage.getItem('lux_app_password');
         const token = localStorage.getItem('lux_token');
-        
         if (user && (appPassword || token)) {
           try {
             const userData = JSON.parse(user);
             const userLogin = userData.user_login || userData.user_email;
             const password = appPassword || token;
-            
             if (userLogin && password) {
               userAuth = {
                 userLogin,
@@ -73,31 +70,25 @@ export const accountService = {
           }
         }
       }
-      
       if (!userAuth) {
         return {
           success: false,
           message: 'User not authenticated. Please login again.'
         };
       }
-
       const formData = new FormData();
-      
       // Add product data
       Object.entries(productData).forEach(([key, value]) => {
         if (value) {
           formData.append(key, value);
         }
       });
-      
       // Add thumbnail
       formData.append('thumbnail', thumbnail);
-      
       // Add gallery images
       galleryImages.forEach((image, index) => {
         formData.append(`gallery_images[${index}]`, image);
       });
-
       // Use user authentication for product creation
       const response = await axios.post(
         `${BASE_URL}/wp-json/lux/v1/create-product/`,
@@ -109,7 +100,6 @@ export const accountService = {
           }
         }
       );
-
       return {
         success: true,
         message: 'Product submitted for review successfully!',
@@ -117,18 +107,15 @@ export const accountService = {
       };
     } catch (error: any) {
       console.error('Error creating product:', error);
-      
       const errorMessage = error.response?.data?.message || 
                           error.response?.statusText || 
                           'Failed to create product. Please try again.';
-      
       return {
         success: false,
         message: errorMessage
       };
     }
   },
-
   // Update user profile
   updateProfile: async (profileData: {
     display_name?: string;
@@ -143,13 +130,11 @@ export const accountService = {
           message: 'User not authenticated'
         };
       }
-
       const response = await accountApi.post('/update-profile/', profileData, {
         headers: {
           'Authorization': `Basic ${btoa(userAuth.userLogin + ":" + userAuth.appPassword)}`
         }
       });
-
       return {
         success: true,
         message: 'Profile updated successfully!',
@@ -157,7 +142,6 @@ export const accountService = {
       };
     } catch (error: any) {
       console.error('Error updating profile:', error);
-      
       return {
         success: false,
         message: error.response?.data?.message || 'Failed to update profile'
@@ -176,7 +160,6 @@ export const accountService = {
           orders: []
         };
       }
-
       const response = await accountApi.get('/user-orders/', {
         params: {
           page,

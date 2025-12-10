@@ -72,11 +72,7 @@ function checkoutReducer(state: CheckoutState, action: CheckoutAction): Checkout
   }
 }
 
-
-
 const CheckoutContext = createContext<CheckoutContextType | undefined>(undefined);
-
-
 
 export function CheckoutProvider({ children, config, callbacks }: CheckoutProviderProps) {
   const [state, dispatch] = useReducer(checkoutReducer, initialState);
@@ -91,7 +87,7 @@ export function CheckoutProvider({ children, config, callbacks }: CheckoutProvid
   // Auto-load user from localStorage
   useEffect(() => {
     try {
-      const savedUser = localStorage.getItem('user');
+      const savedUser = localStorage.getItem('lux_user');
       if (savedUser) {
         const user = JSON.parse(savedUser);
         console.log('🔄 Loading saved user:', user);

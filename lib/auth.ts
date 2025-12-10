@@ -80,7 +80,7 @@ export async function getCurrentUser(): Promise<User | null> {
   }
   // Fallback to check if we can get user from localStorage (for migration)
   if (typeof window !== 'undefined') {
-    const localUser = localStorage.getItem('lux_user') || localStorage.getItem('user');
+    const localUser = localStorage.getItem('lux_user');
     if (localUser) {
       try {
         return JSON.parse(localUser) as User;

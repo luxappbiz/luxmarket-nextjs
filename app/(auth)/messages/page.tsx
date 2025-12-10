@@ -4,6 +4,7 @@ import MessagesContainer from "@/components/messages/container";
 
 export default async function MessagesPage() {
   const user = await getCurrentUser();
+  console.log('MessagesPage user', user);
   const authToken = await getCurrentUserAuthToken();
   console.log('MessagesPage authToken', authToken);
 

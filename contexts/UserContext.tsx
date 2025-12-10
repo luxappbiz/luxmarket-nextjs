@@ -100,7 +100,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     loadUser();
 
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'user') {
+      if (e.key === 'lux_user') {
         if (e.newValue) {
           try {
             const userData = JSON.parse(e.newValue);

@@ -26,6 +26,7 @@ export default function ConversationList({
   selectedConversation,
   onSelect,
 }: ConversationListProps) {
+  console.log('ConversationList user', user);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -67,7 +68,7 @@ export default function ConversationList({
     console.log('authToken', authToken);
     const response = await axios.get(api_url, {
       headers: {
-        Authorization: `Basic ${authToken}`,
+        Authorization: `Basic ${btoa(`${user.user_login}:${authToken}`)}`,
       },
     });
     const allConversations: ConversationItem[] = response.data.conversations;

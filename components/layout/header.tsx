@@ -32,7 +32,7 @@ export const Header = () => {
     useEffect(() => {
         const checkAuthStatus = () => {
             const token = localStorage.getItem('lux_token');
-            const userData = localStorage.getItem('user');
+            const userData = localStorage.getItem('lux_user');
             if (token && userData) {
                 try {
                     const parsedUser = JSON.parse(userData);
@@ -51,7 +51,7 @@ export const Header = () => {
         // Initial check
         checkAuthStatus();
         const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'lux_token' || e.key === 'user') { // Changed from tokenStorage keys
+            if (e.key === 'lux_token' || e.key === 'lux_user') { // Changed from tokenStorage keys
                 checkAuthStatus();
             }
         };
@@ -67,7 +67,7 @@ export const Header = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('lux_token');
-        localStorage.removeItem('user');
+        localStorage.removeItem('lux_user');
         localStorage.removeItem('lux_app_password');
         document.cookie = 'lux_auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         setIsLoggedIn(false);

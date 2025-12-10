@@ -8,6 +8,7 @@ import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { authApi } from '@/lib/api';
 import { useUser } from '@/contexts/UserContext';
+import { setUser } from '@/lib/auth';
 // import { useRouter } from 'next/router';
 
 const LoginForm = () => {
@@ -52,6 +53,10 @@ const LoginForm = () => {
                   formData.rememberMe,
                   response.application_password
               );
+              // Save user to cookies
+              if (response.user) {
+                  await setUser(response.user);
+              }
               setFormData({ login: '', password: '', rememberMe: false });
               // router.push('/account');
               window.location.href = '/account';

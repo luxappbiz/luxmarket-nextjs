@@ -207,7 +207,6 @@ export default function LoginPage() {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="mt-8 pt-8 border-t border-gray-800">
                                         <p className="text-sm text-gray-400 mb-4">Download our mobile app</p>
                                         <Link
