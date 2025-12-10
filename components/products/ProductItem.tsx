@@ -46,7 +46,7 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
 
   if (viewMode === 'list') {
     return (
-      <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden">
+      <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden py-0 gap-3">
         <div className="md:flex">
           <div className="relative md:w-64 h-48 md:h-auto">
             {product.status === 'sold' && (
@@ -67,8 +67,7 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
               sizes="(max-width: 768px) 100vw, 256px"
             />
           </div>
-
-          <CardContent className="flex-1 p-6">
+          <CardContent className="flex-1 py-3">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
@@ -93,7 +92,6 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
                   </div>
                 </div>
               </div>
-
               <div className="text-right">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-2xl font-bold text-gray-900">
@@ -116,7 +114,6 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
                 </div>
               </div>
             </div>
-
             <div className="flex justify-between items-center">
               <Badge
                 className={`${getStatusColor(product.status)} text-white text-xs`}
@@ -135,7 +132,7 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
 
   // Grid view (default)
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden">
+    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden py-0 gap-0">
       <div className="relative">
         {product.status === 'sold' && (
           <Badge className={`absolute top-2 left-2 z-10 ${getStatusColor(product.status)} text-white text-xs`}>
@@ -162,19 +159,16 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
           />
         </div>
       </div>
-
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center gap-2 mb-2">
           {getCategoryIcon(product.category)}
           <span className="text-xs text-gray-600 capitalize">
             {product.category.replace('-', ' ')}
           </span>
         </div>
-
         <h4 className="font-semibold text-gray-900 mb-2 text-sm group-hover:text-gray-700 transition-colors line-clamp-2">
           {product.title}
         </h4>
-
         <div className="flex items-center gap-2 mb-3">
           <span className="text-lg font-bold text-gray-900">
             {product.price}
@@ -185,7 +179,6 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
             </span>
           )}
         </div>
-
         <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
           {product.location && (
             <div className="flex items-center gap-1">
@@ -198,7 +191,6 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
             <span>{product.date}</span>
           </div>
         </div>
-
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <span className="text-xs text-gray-600">{product.seller.name}</span>

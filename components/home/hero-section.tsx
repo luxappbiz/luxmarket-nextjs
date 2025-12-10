@@ -62,7 +62,7 @@ export function HeroSection() {
                                     </span>
                                 </p>
                             </div>
-                            <div className="pt-6">
+                            <div>
                                 <p className="text-sm text-gray-300 mb-3">Available on App Store</p>
                                 <Link
                                     href="https://apps.apple.com/us/app/my-lux-market/id6738446545"
