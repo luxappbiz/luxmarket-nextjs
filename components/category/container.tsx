@@ -7,6 +7,7 @@ import ProductItem from '@/components/products/ProductItem';
 import { productsService, Product } from '@/lib/products-api';
 import CategoryHero from './hero';
 import LoginForm from '../auth/LoginForm';
+import { useAuth } from '@/hooks/useAuth';
 
 type Props = {
   categoryId: string;
@@ -39,8 +40,7 @@ export default function CategoryContainer({
   defaultView = 'grid',
   perPage = 12,
 }: Props) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const { isLoggedIn, user } = useAuth();
   // UI
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('date');
@@ -153,34 +153,9 @@ export default function CategoryContainer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, categoryId]);
 
-  // Check authentication status on component mount and when localStorage changes
-  useEffect(() => {
-      const checkAuthStatus = () => {
-          const token = localStorage.getItem('lux_token');
-          const userData = localStorage.getItem('lux_user');
-          if (token && userData) {
-              try {
-                  const parsedUser = JSON.parse(userData);
-                  setIsLoggedIn(true);
-                  setUser(parsedUser);
-              } catch (error) {
-                  console.error('Error parsing user data:', error);
-                  setIsLoggedIn(false);
-                  setUser(null);
-              }
-          } else {
-              setIsLoggedIn(false);
-              setUser(null);
-          }
-      };
-      // Initial check
-      checkAuthStatus();
-  }, []);
-
-  console.log('isLoggedIn:', isLoggedIn);
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div>
         {/* Hero */}
         <CategoryHero
           title={title}
@@ -191,16 +166,19 @@ export default function CategoryContainer({
           loading={loading}
           showSearch={false}
         />
-        <section>
-        <div className="container mx-auto p-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            <LoginForm />
+        <section className="py-12">
+          <div className="container mx-auto p-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center">
+                <h2 className="text-2xl font-semibold">Login to Access Content</h2>
+              </div>
+              <LoginForm />
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
-  );
-}
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -271,7 +271,6 @@ export default function AccountPage() {
             </Card>
           </div>
         );
-
       case 'subscriptions':
         return <Memberships />  
       default:
@@ -280,14 +279,13 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div>
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-to-r from-gray-900 to-black text-white overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-[url('/images/cars/bugatti-chiron.jpg')] bg-cover bg-center bg-no-repeat"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/80"></div>
         </div>
-
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">My Account</h1>

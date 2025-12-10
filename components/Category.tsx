@@ -154,7 +154,7 @@ export default function Category({
   }, [searchQuery, categoryId]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div>
       {/* Hero */}
       <CategoryHero
         title={title}

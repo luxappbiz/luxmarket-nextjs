@@ -5,14 +5,14 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, User, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState<any>(null);
+    const { isLoggedIn, user } = useAuth();
     const router = useRouter();
 
     const navigation = [
@@ -23,53 +23,6 @@ export const Header = () => {
         { name: "Plans", href: "/membership" },
     ];
 
-    // Helper function to get cookie value
-    const getCookie = (name: string): string | null => {
-        if (typeof document === 'undefined') return null;
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) {
-            return parts.pop()?.split(';').shift() || null;
-        }
-        return null;
-    };
-
-    // Check authentication status on component mount and when cookies change
-    useEffect(() => {
-        const checkAuthStatus = () => {
-            // lux_auth_token is httpOnly, so we can't read it from JavaScript
-            // We only check lux_user which is accessible to JavaScript
-            const userData = getCookie('lux_user');
-            if (userData) {
-                try {
-                    // Decode URL-encoded cookie value before parsing
-                    const decodedUserData = decodeURIComponent(userData);
-                    const parsedUser = JSON.parse(decodedUserData);
-                    setIsLoggedIn(true);
-                    setUser(parsedUser);
-                } catch (error) {
-                    console.error('Error parsing user data:', error);
-                    setIsLoggedIn(false);
-                    setUser(null);
-                }
-            } else {
-                setIsLoggedIn(false);
-                setUser(null);
-            }
-        };
-        // Initial check
-        checkAuthStatus();
-        // Custom event for same-tab login/logout
-        const handleAuthChange = () => checkAuthStatus();
-        window.addEventListener('authStateChanged', handleAuthChange);
-        // Poll for cookie changes (since cookies don't trigger storage events)
-        const interval = setInterval(checkAuthStatus, 1000);
-        return () => {
-            window.removeEventListener('authStateChanged', handleAuthChange);
-            clearInterval(interval);
-        };
-    }, []);
-
     const handleLogout = () => {
         // Clear localStorage (for backward compatibility)
         localStorage.removeItem('lux_token');
@@ -79,8 +32,7 @@ export const Header = () => {
         document.cookie = 'lux_auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax;';
         document.cookie = 'lux_user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax;';
         document.cookie = 'app_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax;';
-        setIsLoggedIn(false);
-        setUser(null);
+        // Trigger auth state change event (useAuth hook will pick this up)
         window.dispatchEvent(new Event('authStateChanged'));
         // Redirect to home
         router.push('/');

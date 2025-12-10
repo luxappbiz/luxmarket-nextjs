@@ -171,7 +171,7 @@ export default function ExplorePage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div>
             {/* Hero Section */}
             <ExploreHero 
                 totalCount={totalCount}
