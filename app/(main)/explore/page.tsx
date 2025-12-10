@@ -7,6 +7,8 @@ import ProductItem from '@/components/products/ProductItem';
 import { productsService, Product } from '@/lib/products-api';
 import ExploreHero from '@/components/explore/Hero';
 import ExploreFilters from '@/components/explore/Filters';
+import ExploreCategories from '@/components/explore/Categories';
+import ExploreGrid from '@/components/explore/Grid';
 
 const sortOptions = [
     { value: 'date', label: 'Newest First' },
@@ -178,67 +180,18 @@ export default function ExplorePage() {
                 handleSearch={handleSearch}
                 loading={loading}
             />
-            {/* Categories Bar - Enhanced Hover Effects */}
-            <section className="bg-white border-b sticky top-16 z-40 shadow-sm">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between py-4">
-                        <div className="flex items-center space-x-1 overflow-x-auto">
-                            {categories.map((category) => {
-                                const Icon = category.icon;
-                                const isActive = selectedCategory === category.id;
-                                return (
-                                    <button
-                                        key={category.id}
-                                        onClick={() => handleCategoryChange(category.id)}
-                                        disabled={loading && !loadingMore}
-                                        className={`group flex items-center space-x-2 pb-2 border-b-2 transition-colors duration-200 whitespace-nowrap cursor-pointer ${isActive
-                                            ? 'border-black text-black'
-                                            : 'border-transparent text-gray-600 hover:text-black hover:border-gray-300'
-                                            } ${loading && !loadingMore ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                    >
-                                        <Icon className={`h-4 w-4 ${isActive ? 'text-black' : 'text-gray-500 group-hover:text-black'
-                                            }`} />
-                                        <span className={`font-medium ${isActive ? 'text-black' : 'group-hover:font-semibold'
-                                            }`}>
-                                            {category.label}
-                                        </span>
-                                        <span className={`text-sm ${isActive ? 'text-gray-700' : 'text-gray-500 group-hover:text-gray-700'
-                                            }`}>
-                                            ({category.count})
-                                        </span>
-
-                                        {/* Simple loading indicator for active category */}
-                                        {isActive && loading && !loadingMore && (
-                                            <div className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-black/20">
-                                                <div className="h-full bg-black animate-pulse" />
-                                            </div>
-                                        )}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        <div className="flex items-center space-x-3">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-                                className="hidden md:flex hover:scale-105 transition-transform duration-200"
-                            >
-                                {viewMode === 'grid' ? <List className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setShowFilters(!showFilters)}
-                                className="hover:scale-105 transition-transform duration-200"
-                            >
-                                <Filter className="h-4 w-4 mr-2" />
-                                Filters
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {/* Categories Bar */}
+            <ExploreCategories
+                categories={categories}
+                selectedCategory={selectedCategory}
+                handleCategoryChange={handleCategoryChange}
+                loading={loading}
+                loadingMore={loadingMore}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                showFilters={showFilters}
+                setShowFilters={setShowFilters}
+            />
             {/* Filters Bar */}
             {showFilters && (
                 <ExploreFilters
@@ -252,101 +205,21 @@ export default function ExplorePage() {
                 />
             )}
             {/* Products Grid */}
-            <section className="py-8">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between mb-6">
-                        <p className="text-gray-600">
-                            Showing <span className="font-medium text-gray-900">{filteredAndSortedProducts.length}</span>
-                            {selectedCategory !== 'all' && (
-                                <span> {selectedCategory.replace('-', ' ')} </span>
-                            )}
-                            {filteredAndSortedProducts.length === 1 ? 'result' : 'results'}
-                            {searchQuery && (
-                                <span> for "{searchQuery}"</span>
-                            )}
-                        </p>
-                        {selectedCategory !== 'all' && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleCategoryChange('all')}
-                            >
-                                View All Items
-                            </Button>
-                        )}
-                    </div>
-                    {/* Loading State */}
-                    {loading && allProducts.length === 0 && (
-                        <div className="flex justify-center items-center py-12">
-                            <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-                            <span className="ml-2 text-gray-500">Loading products...</span>
-                        </div>
-                    )}
-                    {/* Error State */}
-                    {error && (
-                        <div className="text-center py-12">
-                            <div className="text-red-500 text-lg mb-4">{error}</div>
-                            <Button onClick={() => loadAllProducts()}>
-                                Try Again
-                            </Button>
-                        </div>
-                    )}
-                    {/* No Results */}
-                    {!loading && !error && filteredAndSortedProducts.length === 0 && (
-                        <div className="text-center py-12">
-                            <div className="text-gray-500 text-lg mb-4">No items found</div>
-                            <p className="text-gray-400 mb-4">
-                                {searchQuery
-                                    ? `No results found for "${searchQuery}"`
-                                    : `No items found in ${selectedCategory.replace('-', ' ')} category`
-                                }
-                            </p>
-                            <Button
-                                variant="outline"
-                                onClick={handleClearFilters}
-                            >
-                                Clear Search & Filters
-                            </Button>
-                        </div>
-                    )}
-                    {/* Products Grid */}
-                    {!loading && !error && filteredAndSortedProducts.length > 0 && (
-                        <div className={`grid gap-6 ${viewMode === 'grid'
-                            ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                            : 'grid-cols-1'
-                            }`}>
-                            {filteredAndSortedProducts.map((product) => (
-                                <ProductItem
-                                    key={product.id}
-                                    product={product}
-                                    viewMode={viewMode}
-                                />
-                            ))}
-                        </div>
-                    )}
-                    {/* Load More */}
-                    {!loading && !error && filteredAndSortedProducts.length > 0 && !hasLoadedAll && (
-                        <div className="mt-12 text-center">
-                            <Button
-                                variant="outline"
-                                size="lg"
-                                onClick={loadMoreProducts}
-                                disabled={loadingMore}
-                                className="border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
-                            >
-                                {loadingMore ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Loading...
-                                    </>
-                                ) : (
-                                    'Load More Items'
-                                )}
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            </section>
+            <ExploreGrid
+                filteredAndSortedProducts={filteredAndSortedProducts}
+                selectedCategory={selectedCategory}
+                searchQuery={searchQuery}
+                handleCategoryChange={handleCategoryChange}
+                loading={loading}
+                allProducts={allProducts}
+                error={error}
+                loadAllProducts={loadAllProducts}
+                handleClearFilters={handleClearFilters}
+                viewMode={viewMode}
+                loadingMore={loadingMore}
+                hasLoadedAll={hasLoadedAll}
+                loadMoreProducts={loadMoreProducts}
+            />
         </div>
     );
 }
