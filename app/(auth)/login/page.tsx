@@ -26,17 +26,13 @@ export default function LoginPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-
         if (!formData.login || !formData.password) {
             setError('Please fill in all fields');
             return;
         }
-
         setIsLoading(true);
-
         try {
             const response = await authApi.login(formData.login, formData.password);
-
             if (response.success) {
                 login(
                     response.token,
@@ -71,21 +67,7 @@ export default function LoginPage() {
                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
                 }} />
             </div>
-
             <div className="relative z-10 min-h-screen flex flex-col">
-                <div className="p-6 md:p-8">
-                    <Link href="/" className="flex items-center space-x-3 text-white">
-                        <div className="relative w-10 h-10">
-                            <Image
-                                src="/images/LUX-Logo.png"
-                                alt="LUX Logo"
-                                fill
-                                className="object-contain"
-                            />
-                        </div>
-                        <span className="text-2xl font-bold">LUX</span>
-                    </Link>
-                </div>
                 {/* Main Content */}
                 <div className="flex-1 flex items-center justify-center p-6">
                     <div className="w-full max-w-5xl">
@@ -94,13 +76,11 @@ export default function LoginPage() {
                                 <div className="md:w-3/5 p-8 md:p-12">
                                     <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
                                     <p className="text-gray-600 mb-8">Log in to your LUX account</p>
-
                                     {error && (
                                         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                                             <p className="text-sm text-red-600">{error}</p>
                                         </div>
                                     )}
-
                                     <form onSubmit={handleSubmit} className="space-y-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="login">Email or Username</Label>
@@ -159,7 +139,6 @@ export default function LoginPage() {
                                                 </Button>
                                             </div>
                                         </div>
-
                                         <div className="flex items-center space-x-2">
                                             <input
                                                 type="checkbox"
@@ -174,7 +153,6 @@ export default function LoginPage() {
                                                 Remember me for 30 days
                                             </Label>
                                         </div>
-
                                         <Button
                                             type="submit"
                                             className="w-full h-12 bg-black hover:bg-gray-900 text-white font-medium"
@@ -198,8 +176,7 @@ export default function LoginPage() {
                                         </p>
                                     </form>
                                 </div>
-
-                                <div className="md:w-2/5 bg-gray-900 p-8 md:p-12 text-white">
+                                <div className="md:w-2/5 bg-zinc-900 p-8 md:p-12 text-white">
                                     <h3 className="text-2xl font-bold mb-6">Welcome to LUX</h3>
                                     <div className="space-y-6">
                                         <div className="flex items-start space-x-3">

@@ -163,6 +163,7 @@ export default function Category({
         setSearchQuery={setSearchQuery}
         loadAllProducts={loadAllProducts}
         loading={loading}
+        showSearch={false}
       />
       {/* Controls */}
       <section className="bg-white border-b">
@@ -187,7 +188,6 @@ export default function Category({
                 Filters
               </Button>
             </div>
-
             <p className="text-gray-600">
               Showing <span className="font-medium text-gray-900">{filteredAndSortedProducts.length}</span>{' '}
               {filteredAndSortedProducts.length === 1 ? 'result' : 'results'}
@@ -195,7 +195,6 @@ export default function Category({
           </div>
         </div>
       </section>
-
       {/* Filters */}
       {showFilters && (
         <section className="bg-gray-100 border-b py-4">
@@ -211,7 +210,6 @@ export default function Category({
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
               </select>
-
               <select
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value)}
@@ -221,7 +219,6 @@ export default function Category({
                   <option key={r.value} value={r.value}>{r.label}</option>
                 ))}
               </select>
-
               <Button variant="ghost" size="sm" onClick={handleClearFilters}>
                 Clear Filters
               </Button>
@@ -229,7 +226,6 @@ export default function Category({
           </div>
         </section>
       )}
-
       {/* Results */}
       <section className="py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -240,7 +236,6 @@ export default function Category({
               <span className="ml-2 text-gray-500">Loading products...</span>
             </div>
           )}
-
           {/* Error */}
           {error && (
             <div className="text-center py-12">
@@ -248,7 +243,6 @@ export default function Category({
               <Button onClick={loadAllProducts}>Try Again</Button>
             </div>
           )}
-
           {/* Empty */}
           {!loading && !error && filteredAndSortedProducts.length === 0 && (
             <div className="text-center py-12">
@@ -259,7 +253,6 @@ export default function Category({
               <Button variant="outline" onClick={handleClearFilters}>Clear Search & Filters</Button>
             </div>
           )}
-
           {/* Grid/List */}
           {!loading && !error && filteredAndSortedProducts.length > 0 && (
             <div className={`grid gap-6 ${viewMode === 'grid'
@@ -271,7 +264,6 @@ export default function Category({
               ))}
             </div>
           )}
-
           {/* Load more */}
           {!loading && !error && filteredAndSortedProducts.length > 0 && !hasLoadedAll && (
             <div className="mt-12 text-center">
