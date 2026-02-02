@@ -77,9 +77,9 @@ export const Header = () => {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="relative hover:bg-gray-100 hover:scale-110 transition-all duration-200"
+                                            className="relative hover:!bg-transparent transition-all duration-200"
                                         >
-                                            <Heart className="h-4 w-4 hover:text-red-500 transition-colors duration-200" />
+                                            <Heart className="h-4 w-4 transition-colors duration-200" />
                                         </Button>
                                     </Link>
                                     <DropdownMenu>
