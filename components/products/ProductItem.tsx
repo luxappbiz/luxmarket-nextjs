@@ -7,6 +7,10 @@ import { Heart, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Product } from '@/lib/products-api';
+import { useEffect, useState } from 'react';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useUser } from '@/contexts/UserContext';
+import { toast } from 'sonner';
 
 interface ProductItemProps {
   product: Product;
@@ -14,6 +18,42 @@ interface ProductItemProps {
 }
 
 export default function ProductItem({ product, viewMode = 'grid' }: ProductItemProps) {
+  const { isFavorite, addFavorite, removeFavorite, favorites } = useFavorites();
+  const { isAuthenticated } = useUser();
+  const [favorited, setFavorited] = useState(false);
+
+  useEffect(() => {
+    setFavorited(isFavorite(product.id));
+  }, [isFavorite, product.id, favorites]);
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    if (!isAuthenticated) {
+      window.dispatchEvent(new Event('openLoginDialog'));
+      return;
+    }
+
+    const wasFavorited = favorited;
+    setFavorited(!wasFavorited);
+
+    try {
+      if (wasFavorited) {
+        await removeFavorite(product.id);
+        toast.success('Removed from wishlist');
+      } else {
+        await addFavorite(product.id);
+        toast.success('Added to wishlist');
+      }
+    } catch (error: any) {
+      setFavorited(wasFavorited);
+      const errorMessage = error?.message || 'Failed to update wishlist';
+      toast.error(errorMessage);
+      console.error('Error updating favorite:', error);
+    }
+  };
+
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'sold': return 'bg-red-600 hover:bg-red-700';
@@ -120,8 +160,17 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
               >
                 {getStatusText(product.status)}
               </Badge>
-              <Button size="icon" variant="ghost" className="h-8 w-8">
-                <Heart className="h-4 w-4" />
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="h-8 w-8"
+                onClick={handleFavoriteClick}
+              >
+                <Heart 
+                  className={`h-4 w-4 transition-all ${favorited ? 'text-red-500' : 'text-gray-400 hover:text-gray-600'}`}
+                  fill={favorited ? '#ef4444' : 'none'}
+                  strokeWidth={favorited ? 2.5 : 2}
+                />
               </Button>
             </div>
           </CardContent>
@@ -145,8 +194,17 @@ export default function ProductItem({ product, viewMode = 'grid' }: ProductItemP
           </Badge>
         )}
         <div className="absolute top-2 right-2 z-10">
-          <Button size="icon" variant="ghost" className="h-8 w-8 bg-white/80 hover:bg-white">
-            <Heart className="h-4 w-4" />
+          <Button 
+            size="icon" 
+            variant="ghost" 
+            className="h-8 w-8 bg-white/80 hover:bg-white"
+            onClick={handleFavoriteClick}
+          >
+            <Heart 
+              className={`h-4 w-4 transition-all ${favorited ? 'text-red-500' : 'text-gray-400 hover:text-gray-600'}`}
+              fill={favorited ? '#ef4444' : 'none'}
+              strokeWidth={favorited ? 2.5 : 2}
+            />
           </Button>
         </div>
         <div className="aspect-[4/3] relative overflow-hidden">

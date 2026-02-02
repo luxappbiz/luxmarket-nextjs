@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter, Baskervville, Roboto } from 'next/font/google'
 import './globals.css'
 import { UserProvider } from '@/contexts/UserContext'
+import FavoritesProvider from '@/providers/FavoritesProvider'
 import { Toaster } from "@/components/ui/sonner"
 import { LoginDialog } from '@/components/auth/login-dialog'
 import Container from '@/components/layout/container'
@@ -36,10 +37,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${baskervville.variable} ${roboto.variable} font-sans`}>
         <UserProvider>
-          <Container>
-            {children}
-          </Container>
-          <Toaster />
+          <FavoritesProvider>
+            <Container>
+              {children}
+            </Container>
+            <Toaster />
+          </FavoritesProvider>
         </UserProvider>
       </body>
     </html>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
-import { Menu, User, LogOut, MessageCircle, Package } from "lucide-react";
+import { Menu, User, LogOut, MessageCircle, Package, Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -72,8 +72,17 @@ export const Header = () => {
                         {/* Desktop CTA */}
                         <div className="hidden md:flex items-center space-x-3">
                             {isLoggedIn ? (
-                                // Logged in state
-                                <DropdownMenu>
+                                <>
+                                    <Link href="/wishlist">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="relative hover:bg-gray-100 hover:scale-110 transition-all duration-200"
+                                        >
+                                            <Heart className="h-4 w-4 hover:text-red-500 transition-colors duration-200" />
+                                        </Button>
+                                    </Link>
+                                    <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button
                                       variant="outline"
@@ -104,8 +113,9 @@ export const Header = () => {
                                       <LogOut className="w-4 h-4 mr-2" />
                                       Logout
                                     </DropdownMenuItem>
-                                  </DropdownMenuContent>
+                                    </DropdownMenuContent>
                                 </DropdownMenu>
+                                </>
                             ) : (
                                 // Not logged in state
                                 <>
@@ -175,14 +185,24 @@ export const Header = () => {
                                             ))}
                                             {/* Account link for mobile when logged in */}
                                             {isLoggedIn && (
-                                                <Link
-                                                    href="/account"
-                                                    className="flex items-center px-4 py-3 text-base font-semibold text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-all duration-200 border-l-4 border-transparent hover:border-black"
-                                                    onClick={() => setIsOpen(false)}
-                                                >
-                                                    <User className="w-4 h-4 mr-2" />
-                                                    Account
-                                                </Link>
+                                                <>
+                                                    <Link
+                                                        href="/wishlist"
+                                                        className="flex items-center px-4 py-3 text-base font-semibold text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-all duration-200 border-l-4 border-transparent hover:border-black"
+                                                        onClick={() => setIsOpen(false)}
+                                                    >
+                                                        <Heart className="w-4 h-4 mr-2" />
+                                                        Wishlist
+                                                    </Link>
+                                                    <Link
+                                                        href="/account"
+                                                        className="flex items-center px-4 py-3 text-base font-semibold text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-all duration-200 border-l-4 border-transparent hover:border-black"
+                                                        onClick={() => setIsOpen(false)}
+                                                    >
+                                                        <User className="w-4 h-4 mr-2" />
+                                                        Account
+                                                    </Link>
+                                                </>
                                             )}
                                         </div>
                                     </nav>
