@@ -64,11 +64,10 @@ NEXT_PUBLIC_API_BASE_URL=
 ### WooCommerce / Checkout
 
 ```env
-NEXT_PUBLIC_CONSUMER_KEY=
-NEXT_PUBLIC_CONSUMER_SECRET=
-NEXT_PUBLIC_WC_CONSUMER_KEY=
-NEXT_PUBLIC_WC_CONSUMER_SECRET=
-NEXT_PUBLIC_WORDPRESS_URL=
+WORDPRESS_URL=
+WC_WORDPRESS_URL=
+WC_CONSUMER_KEY=
+WC_CONSUMER_SECRET=
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 ```
 
@@ -77,7 +76,8 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 - Route protection for `/account` is handled by [proxy.ts](/Users/justinestrada/Documents/LUX/Applications/luxmarket-nextjs/proxy.ts).
 - Membership checkout currently starts from [app/(main)/membership/page.tsx](/Users/justinestrada/Documents/LUX/Applications/luxmarket-nextjs/app/(main)/membership/page.tsx) and passes plan data by query string into [app/(main)/checkout/page.tsx](/Users/justinestrada/Documents/LUX/Applications/luxmarket-nextjs/app/(main)/checkout/page.tsx).
 - Messaging, account, and checkout flows depend on external WordPress and WooCommerce endpoints being reachable.
-- The current codebase still reads several `NEXT_PUBLIC_*` credentials in browser-side code. That reflects the current implementation, not the desired long-term security model.
+- Commerce requests now go through internal `/api/commerce` and `/api/account` routes so WooCommerce consumer credentials do not need to be exposed to the browser.
+- The new server-side commerce layer supports legacy `NEXT_PUBLIC_*` credential variables as a temporary fallback, but server-only environment variables are preferred.
 - Production builds that use `next/font/google` require network access to Google Fonts during build unless fonts are self-hosted.
 
 ## Verification

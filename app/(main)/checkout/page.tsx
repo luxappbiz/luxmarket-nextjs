@@ -10,8 +10,6 @@ import type { CheckoutConfig, CheckoutProduct } from '@/checkout-module';
 
 const checkoutConfig: CheckoutConfig = {
   wordpressUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://mkdistributionllc.com',
-  consumerKey: process.env.NEXT_PUBLIC_CONSUMER_KEY || '',
-  consumerSecret: process.env.NEXT_PUBLIC_CONSUMER_SECRET || '',
   stripePublicKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
   enabledPaymentMethods: ['stripe'],
   subscriptionsEnabled: true,

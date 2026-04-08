@@ -90,16 +90,12 @@ export class CheckoutAPI {
 
   private createHttpClient(): AxiosInstance {
     const version = this.config.version || "v3";
-    const credentials = btoa(
-      `${this.config.consumerKey}:${this.config.consumerSecret}`
-    );
 
     return axios.create({
-      baseURL: `${this.config.wordpressUrl}/wp-json/wc/${version}`,
+      baseURL: `/api/commerce/wc/${version}`,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Basic ${credentials}`,
       },
       timeout: TIMEOUTS.API_REQUEST,
     });
@@ -326,14 +322,24 @@ export class CheckoutAPI {
   // ===================================
 
   private createCustomClient(): AxiosInstance {
-    return axios.create({
-      baseURL: `${this.config.wordpressUrl}/wp-json`,
+    const client = axios.create({
+      baseURL: `/api/commerce`,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
       timeout: TIMEOUTS.API_REQUEST,
     });
+
+    client.interceptors.request.use((config) => {
+      if (this.userToken) {
+        config.headers["X-Customer-Token"] = this.userToken;
+      }
+
+      return config;
+    });
+
+    return client;
   }
 
   private hasSubscriptionItems(lineItems: LineItem[]): boolean {

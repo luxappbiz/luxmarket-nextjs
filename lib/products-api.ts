@@ -1,16 +1,8 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const CONSUMER_KEY = process.env.NEXT_PUBLIC_CONSUMER_KEY ;
-const CONSUMER_SECRET = process.env.NEXT_PUBLIC_CONSUMER_SECRET;
-
 // Create axios instance with basic auth
 const productsApi = axios.create({
-  baseURL: `${BASE_URL}/wp-json/wc/v3`,
-  auth: {
-    username: CONSUMER_KEY!,
-    password: CONSUMER_SECRET!,
-  },
+  baseURL: `/api/commerce/wc/v3`,
   headers: {
     'Content-Type': 'application/json',
   },

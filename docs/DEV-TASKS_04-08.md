@@ -15,7 +15,7 @@ The codebase is functional, builds successfully on Next 16.2.2, and has a clear 
 
 ## Major Bug Fixes / Technical Debt
 
-### 2. Remove Privileged Commerce Credentials From Client Bundles
+### ✅ 2. Remove Privileged Commerce Credentials From Client Bundles
 - **Priority**: High
 - **Description**: WooCommerce and related credentials are currently configured with `NEXT_PUBLIC_*` variables and consumed directly in browser-side code, including `lib/products-api.ts`, `lib/account-api.ts`, `app/(main)/checkout/page.tsx`, and `checkout-module/index.ts`. That makes privileged keys part of the client boundary and weakens the security model significantly.
 - **Proposed Solution**: Move all privileged WooCommerce and WordPress interactions behind server actions or internal API route handlers. Replace browser-facing secrets with server-only environment variables, proxy only the minimum data the UI needs, and rotate any credentials that have already been exposed client-side.

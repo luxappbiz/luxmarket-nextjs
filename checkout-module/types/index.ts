@@ -6,8 +6,8 @@
 
 export interface WooCommerceSetupConfig {
   wordpressUrl: string;
-  consumerKey: string;
-  consumerSecret: string;
+  consumerKey?: string;
+  consumerSecret?: string;
   version?: "v3" | "v2" | "v1";
   stripePublicKey?: string;
   currency?: string;
@@ -18,8 +18,8 @@ export interface WooCommerceSetupConfig {
 
 export interface CheckoutConfig {
   wordpressUrl: string;
-  consumerKey: string;
-  consumerSecret: string;
+  consumerKey?: string;
+  consumerSecret?: string;
   stripePublicKey?: string;
   enabledPaymentMethods?: ("stripe" | "cod")[];
   namespace?: string;
@@ -36,8 +36,8 @@ export interface CheckoutConfig {
 }
 
 export interface WooCommerceCredentials {
-  consumerKey: string;
-  consumerSecret: string;
+  consumerKey?: string;
+  consumerSecret?: string;
   wordpressUrl: string;
   version?: "v3" | "v2" | "v1";
 }

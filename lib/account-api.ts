@@ -1,17 +1,8 @@
 // lib/account-api.ts
 import axios from 'axios';
-import { getLuxUserAuth } from './auth';
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
-const CONSUMER_KEY = process.env.NEXT_PUBLIC_WC_CONSUMER_KEY;
-const CONSUMER_SECRET = process.env.NEXT_PUBLIC_WC_CONSUMER_SECRET;
 
 const accountApi = axios.create({
-  baseURL: `${BASE_URL}/wp-json/lux/v1`,
-  auth: {
-    username: CONSUMER_KEY!,
-    password: CONSUMER_SECRET!,
-  },
+  baseURL: `/api/account`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -47,59 +38,21 @@ export const accountService = {
     galleryImages: File[]
   ): Promise<CreateProductResponse> => {
     try {
-      // Try server-side auth first
-      let userAuth = await getLuxUserAuth();
-      // If server-side auth fails, try client-side fallback
-      if (!userAuth && typeof window !== 'undefined') {
-        const user = localStorage.getItem('lux_user');
-        const appPassword = localStorage.getItem('lux_app_password');
-        const token = localStorage.getItem('lux_token');
-        if (user && (appPassword || token)) {
-          try {
-            const userData = JSON.parse(user);
-            const userLogin = userData.user_login || userData.user_email;
-            const password = appPassword || token;
-            if (userLogin && password) {
-              userAuth = {
-                userLogin,
-                appPassword: password
-              };
-            }
-          } catch (error) {
-            console.error('Error parsing user data from localStorage:', error);
-          }
-        }
-      }
-      if (!userAuth) {
-        return {
-          success: false,
-          message: 'User not authenticated. Please login again.'
-        };
-      }
       const formData = new FormData();
-      // Add product data
       Object.entries(productData).forEach(([key, value]) => {
         if (value) {
           formData.append(key, value);
         }
       });
-      // Add thumbnail
       formData.append('thumbnail', thumbnail);
-      // Add gallery images
       galleryImages.forEach((image, index) => {
         formData.append(`gallery_images[${index}]`, image);
       });
-      // Use user authentication for product creation
-      const response = await axios.post(
-        `${BASE_URL}/wp-json/lux/v1/create-product/`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Basic ${btoa(userAuth.userLogin + ":" + userAuth.appPassword)}`,
-          }
+      const response = await accountApi.post('/create-product', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         }
-      );
+      });
       return {
         success: true,
         message: 'Product submitted for review successfully!',
@@ -123,18 +76,7 @@ export const accountService = {
     phone?: string;
   }) => {
     try {
-      const userAuth = await getLuxUserAuth();
-      if (!userAuth) {
-        return {
-          success: false,
-          message: 'User not authenticated'
-        };
-      }
-      const response = await accountApi.post('/update-profile/', profileData, {
-        headers: {
-          'Authorization': `Basic ${btoa(userAuth.userLogin + ":" + userAuth.appPassword)}`
-        }
-      });
+      const response = await accountApi.post('/update-profile', profileData);
       return {
         success: true,
         message: 'Profile updated successfully!',
@@ -152,21 +94,10 @@ export const accountService = {
   // Get user orders
   getUserOrders: async (page: number = 1, perPage: number = 10) => {
     try {
-      const userAuth = await getLuxUserAuth();
-      if (!userAuth) {
-        return {
-          success: false,
-          message: 'User not authenticated',
-          orders: []
-        };
-      }
-      const response = await accountApi.get('/user-orders/', {
+      const response = await accountApi.get('/user-orders', {
         params: {
           page,
           per_page: perPage
-        },
-        headers: {
-          'Authorization': `Basic ${btoa(userAuth.userLogin + ":" + userAuth.appPassword)}`
         }
       });
 
@@ -189,22 +120,10 @@ export const accountService = {
   // Get user products
   getUserProducts: async (page: number = 1, perPage: number = 10) => {
     try {
-      const userAuth = await getLuxUserAuth();
-      if (!userAuth) {
-        return {
-          success: false,
-          message: 'User not authenticated',
-          products: []
-        };
-      }
-
-      const response = await accountApi.get('/user-products/', {
+      const response = await accountApi.get('/user-products', {
         params: {
           page,
           per_page: perPage
-        },
-        headers: {
-          'Authorization': `Basic ${btoa(userAuth.userLogin + ":" + userAuth.appPassword)}`
         }
       });
 

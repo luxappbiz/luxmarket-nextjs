@@ -52,7 +52,7 @@ export function CheckoutForm() {
     const [emailExists, setEmailExists] = useState<boolean | null>(null);
 
     const checkEmailExists = async (email: string, signal?: AbortSignal): Promise<boolean> => {
-    const url = `${config.wordpressUrl}/wp-json/wc-checkout/v1/auth/check-email?email=${encodeURIComponent(email)}`;
+    const url = `/api/commerce/wc-checkout/v1/auth/check-email?email=${encodeURIComponent(email)}`;
 
   const res = await fetch(url, { method: 'GET', signal });
   const data = await res.json().catch(() => ({}));

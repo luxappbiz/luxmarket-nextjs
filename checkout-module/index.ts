@@ -80,8 +80,6 @@ import { DEFAULT_CONFIG, PAYMENT_METHODS } from './constants';
 export function createCheckout(config: Partial<WooCommerceSetupConfig> = {}): CheckoutConfig {
   const {
     wordpressUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL || '',
-    consumerKey = process.env.NEXT_PUBLIC_WC_CONSUMER_KEY || '',
-    consumerSecret = process.env.NEXT_PUBLIC_WC_CONSUMER_SECRET || '',
     version = DEFAULT_CONFIG.version,
     stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     currency = DEFAULT_CONFIG.currency,
@@ -90,8 +88,8 @@ export function createCheckout(config: Partial<WooCommerceSetupConfig> = {}): Ch
     subscriptionsEnabled = DEFAULT_CONFIG.subscriptionsEnabled
   } = config;
 
-  if (!wordpressUrl || !consumerKey || !consumerSecret) {
-    throw new Error('WordPress URL, WooCommerce consumer key, and consumer secret are required');
+  if (!wordpressUrl) {
+    throw new Error('WordPress URL is required');
   }
 
   const defaultPaymentMethods: ('stripe' | 'cod')[] = [];
@@ -102,8 +100,6 @@ export function createCheckout(config: Partial<WooCommerceSetupConfig> = {}): Ch
 
   return {
     wordpressUrl: wordpressUrl.replace(/\/$/, ''),
-    consumerKey,
-    consumerSecret,
     version,
     stripePublicKey,
     enabledPaymentMethods: enabledPaymentMethods || defaultPaymentMethods,
@@ -122,8 +118,6 @@ export function createCheckout(config: Partial<WooCommerceSetupConfig> = {}): Ch
 export function quickSetup(
   wordpressUrl: string,
   options: Partial<{
-    consumerKey: string;
-    consumerSecret: string;
     stripeKey?: string;
     taxRate?: number;
     subscriptions?: boolean;
@@ -131,8 +125,6 @@ export function quickSetup(
 ): CheckoutConfig {
   return createCheckout({
     wordpressUrl,
-    consumerKey: options.consumerKey || '',
-    consumerSecret: options.consumerSecret || '',
     stripePublicKey: options.stripeKey,
     taxRate: options.taxRate || 0.1,
     subscriptionsEnabled: options.subscriptions || false
