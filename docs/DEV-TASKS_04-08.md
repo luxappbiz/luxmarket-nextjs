@@ -23,7 +23,7 @@ The codebase is functional, builds successfully on Next 16.2.2, and has a clear 
 - **Rationale**: This is the most important issue in the repository. It affects security, operational safety, and future maintainability across checkout, catalog, and account features.
 - **Dependencies / Risks**: Requires backend/API contract work and credential rotation. Some existing frontend flows may need to be redesigned around server-owned requests.
 
-### 3. Consolidate Authentication And Session State Into One Model
+### ✅ 3. Consolidate Authentication And Session State Into One Model
 - **Priority**: High
 - **Description**: Authentication is currently implemented through overlapping mechanisms with inconsistent keys and storage rules. Examples include `contexts/UserContext.tsx`, `hooks/useAuth.ts`, `lib/api.ts`, `lib/auth.ts`, and `app/actions/auth.ts`, which variously use `user`, `lux_user`, `lux_token`, `lux_auth_token`, `user_info`, and `app_password`. Some code reads cookies, some reads `localStorage`, and some attempts both. This makes auth bugs difficult to reason about and increases the chance of stale or partial session state.
 - **Proposed Solution**: Define a single session contract for token, user payload, and refresh/logout behavior. Prefer server-owned cookies for auth, keep client state derived from that source of truth, and remove legacy fallback paths once migration is complete. Centralize session reads/writes in one module or provider.

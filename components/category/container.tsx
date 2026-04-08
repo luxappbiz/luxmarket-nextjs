@@ -7,7 +7,7 @@ import ProductItem from '@/components/products/ProductItem';
 import { productsService, Product } from '@/lib/products-api';
 import CategoryHero from './hero';
 import LoginForm from '../auth/LoginForm';
-import { useAuth } from '@/hooks/useAuth';
+import { useUser } from '@/contexts/UserContext';
 
 type Props = {
   categoryId: string;
@@ -40,7 +40,7 @@ export default function CategoryContainer({
   defaultView = 'grid',
   perPage = 12,
 }: Props) {
-  const { isLoggedIn, user } = useAuth();
+  const { isAuthenticated } = useUser();
   // UI
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('date');
@@ -153,7 +153,7 @@ export default function CategoryContainer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, categoryId]);
 
-  if (!isLoggedIn) {
+  if (!isAuthenticated) {
     return (
       <div>
         {/* Hero */}

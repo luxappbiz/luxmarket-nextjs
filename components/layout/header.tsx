@@ -8,11 +8,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { Menu, User, LogOut, MessageCircle, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/contexts/UserContext";
 
 export const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { isLoggedIn, user } = useAuth();
+    const { isAuthenticated, user, logout } = useUser();
     const router = useRouter();
 
     const navigation = [
@@ -23,18 +23,8 @@ export const Header = () => {
         { name: "Plans", href: "/membership" },
     ];
 
-    const handleLogout = () => {
-        // Clear localStorage (for backward compatibility)
-        localStorage.removeItem('lux_token');
-        localStorage.removeItem('lux_user');
-        localStorage.removeItem('lux_app_password');
-        // Clear cookies
-        document.cookie = 'lux_auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax;';
-        document.cookie = 'lux_user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax;';
-        document.cookie = 'app_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax;';
-        // Trigger auth state change event (useAuth hook will pick this up)
-        window.dispatchEvent(new Event('authStateChanged'));
-        // Redirect to home
+    const handleLogout = async () => {
+        await logout();
         router.push('/');
     };
 
@@ -71,7 +61,7 @@ export const Header = () => {
                         </nav>
                         {/* Desktop CTA */}
                         <div className="hidden md:flex items-center space-x-3">
-                            {isLoggedIn ? (
+                            {isAuthenticated ? (
                                 // Logged in state
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
@@ -81,7 +71,7 @@ export const Header = () => {
                                       className="font-semibold text-gray-700 hover:text-black"
                                     >
                                       <User className="w-4 h-4 mr-2" />
-                                      {user?.display_name || user?.username || 'User'}
+                                      {user?.display_name || user?.user_login || 'User'}
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
@@ -152,12 +142,12 @@ export const Header = () => {
                                         </div>
                                     </div>
                                     {/* User Info (Mobile) */}
-                                    {isLoggedIn && (
+                            {isAuthenticated && (
                                         <div className="px-4 py-3 border-b border-gray-100">
                                             <p className="text-sm font-medium text-gray-900">
-                                                {user?.display_name || user?.username || 'User'}
+                                                {user?.display_name || user?.user_login || 'User'}
                                             </p>
-                                            <p className="text-xs text-gray-600">{user?.email}</p>
+                                            <p className="text-xs text-gray-600">{user?.user_email}</p>
                                         </div>
                                     )}
                                     {/* Navigation */}
@@ -174,7 +164,7 @@ export const Header = () => {
                                                 </Link>
                                             ))}
                                             {/* Account link for mobile when logged in */}
-                                            {isLoggedIn && (
+                                            {isAuthenticated && (
                                                 <Link
                                                     href="/account"
                                                     className="flex items-center px-4 py-3 text-base font-semibold text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-all duration-200 border-l-4 border-transparent hover:border-black"
@@ -188,7 +178,7 @@ export const Header = () => {
                                     </nav>
                                     {/* Mobile CTA */}
                                     <div className="border-t border-gray-100 pt-6 pb-4 space-y-3 px-4">
-                                        {isLoggedIn ? (
+                                        {isAuthenticated ? (
                                             <Button
                                                 variant="outline"
                                                 className="w-full h-12 font-semibold text-red-600 border-red-300 hover:bg-red-50"
