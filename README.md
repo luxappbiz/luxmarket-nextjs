@@ -1,57 +1,96 @@
-# [LUX](https://www.luxmarket.app/)
+# LUX Market
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+LUX Market is a Next.js 16 App Router application for a luxury marketplace experience. The current app includes catalog browsing, authentication, account management, membership checkout, and direct messaging backed by WordPress and WooCommerce APIs.
 
-## Getting Started
+## Stack
 
-First, run the development server:
+- Next.js `16.2.2`
+- React `19`
+- TypeScript
+- Tailwind CSS `4`
+- Radix UI primitives
+- Stripe client integration in `checkout-module/`
+
+## Repository Layout
+
+- `app/`: App Router layouts, pages, and server actions
+- `components/`: feature and shared UI components
+- `checkout-module/`: reusable checkout flow and payment logic
+- `lib/`: API clients and auth/account utilities
+- `contexts/` and `hooks/`: client-side shared state and auth helpers
+- `docs/`: project documentation and tasklists
+
+## Local Development
+
+This repository currently includes both `package-lock.json` and `pnpm-lock.yaml`. Use one package manager consistently in your local environment. The commands below use `npm`.
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
 
-## 🛠️ Environment Variables Setup
+`npm run lint` uses the repo ESLint flat config and currently passes with warnings.
 
-Before running the project, create a `.env.local` file in the root directory and add the following environment variables:
+## Environment Variables
+
+Create `.env.local` in the project root and provide the variables required for the features you are using.
+
+### Core App / WordPress URLs
 
 ```env
-NEXT_PUBLIC_BASE_URL=******
-NEXT_PUBLIC_API_BASE_URL=******
-NEXT_PUBLIC_CONSUMER_KEY=******
-NEXT_PUBLIC_CONSUMER_SECRET=******
+NEXT_PUBLIC_BASE_URL=
+NEXT_PUBLIC_BASE_API_URL=
+NEXT_PUBLIC_API_BASE_URL=
 ```
 
-> ⚠️ These variables are prefixed with `NEXT_PUBLIC_` which means they are exposed to the browser. Do **not** include sensitive credentials here.
+### WooCommerce / Checkout
 
-### 🔒 Best Practices
-- Never commit your `.env.local` file to version control.
-- Use `.env.production` for production builds if values differ.
-- If deploying to Vercel, add these environment variables in the **Vercel Project Settings → Environment Variables**.
+```env
+NEXT_PUBLIC_CONSUMER_KEY=
+NEXT_PUBLIC_CONSUMER_SECRET=
+NEXT_PUBLIC_WC_CONSUMER_KEY=
+NEXT_PUBLIC_WC_CONSUMER_SECRET=
+NEXT_PUBLIC_WORDPRESS_URL=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+```
 
-## Learn More
+## Current Runtime Notes
 
-To learn more about Next.js, take a look at the following resources:
+- Route protection for `/account` is handled by [proxy.ts](/Users/justinestrada/Documents/LUX/Applications/luxmarket-nextjs/proxy.ts).
+- Membership checkout currently starts from [app/(main)/membership/page.tsx](/Users/justinestrada/Documents/LUX/Applications/luxmarket-nextjs/app/(main)/membership/page.tsx) and passes plan data by query string into [app/(main)/checkout/page.tsx](/Users/justinestrada/Documents/LUX/Applications/luxmarket-nextjs/app/(main)/checkout/page.tsx).
+- Messaging, account, and checkout flows depend on external WordPress and WooCommerce endpoints being reachable.
+- The current codebase still reads several `NEXT_PUBLIC_*` credentials in browser-side code. That reflects the current implementation, not the desired long-term security model.
+- Production builds that use `next/font/google` require network access to Google Fonts during build unless fonts are self-hosted.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Verification
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Use these commands for basic validation:
 
-## Deploy on Vercel
+```bash
+npm run lint
+npm run build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## References
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Documentation](https://react.dev/)
+- [Stripe Documentation](https://docs.stripe.com/)
