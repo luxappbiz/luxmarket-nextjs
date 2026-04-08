@@ -2,33 +2,24 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from 'next/navigation';
-
-interface User {
-  ID: string;
-  display_name: string;
-  user_login: string;
-  user_email: string;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  image: string;
-  website: string;
-  token: string;
-  user_nicename: string;
-  affiliate_id: number;
-  user_registered: string;
-  is_event_host: boolean;
-  application_password?: string;
-}
+import { clearSessionAction } from "@/app/actions/auth";
+import {
+  AUTH_STATE_CHANGED_EVENT,
+  clearStoredSession,
+  readStoredUser,
+  SessionUser,
+  updateStoredUser,
+  writeSession,
+} from "@/lib/session-client";
 
 interface UserContextType {
-  user: User | null;
-  setUser: (user: User | null) => void;
-  logout: () => void;
+  user: SessionUser | null;
+  setUser: (user: SessionUser | null) => void;
+  logout: () => Promise<void>;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (token: string, userData: User, rememberMe?: boolean, appPassword?: string) => void;
-  updateUser: (userData: Partial<User>) => void;
+  login: (token: string, userData: SessionUser, rememberMe?: boolean, appPassword?: string) => void;
+  updateUser: (userData: Partial<SessionUser>) => void;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -77,7 +68,7 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUserState] = useState<SessionUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const isAuthenticated = !!user;
@@ -85,13 +76,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   useEffect(() => {
     const loadUser = () => {
       try {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-          const userData = JSON.parse(storedUser);
-          setUser(userData);
-        }
+        setUserState(readStoredUser());
       } catch (error) {
         console.error('Error loading user:', error);
+        setUserState(null);
       } finally {
         setIsLoading(false);
       }
@@ -99,65 +87,52 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     loadUser();
 
+    const syncUserFromStorage = () => {
+      setUserState(readStoredUser());
+    };
+
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'lux_user') {
-        if (e.newValue) {
-          try {
-            const userData = JSON.parse(e.newValue);
-            setUser(userData);
-          } catch (error) {
-            console.error('Error parsing user data:', error);
-            setUser(null);
-          }
-        } else {
-          setUser(null);
-        }
+      if (e.key === "lux_user" || e.key === null) {
+        syncUserFromStorage();
       }
     };
 
+    window.addEventListener(AUTH_STATE_CHANGED_EVENT, syncUserFromStorage);
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener(AUTH_STATE_CHANGED_EVENT, syncUserFromStorage);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
-const login = (token: string, userData: User, rememberMe = false, appPassword?: string) => {
-  const userWithAuth = { ...userData, token, application_password: appPassword };
-  setUser(userWithAuth);
-  
-  localStorage.setItem("user", JSON.stringify(userWithAuth));
-  localStorage.setItem("lux_token", token);
-  if (appPassword) {
-    localStorage.setItem("lux_app_password", appPassword);
-  }
+  const setUser = (nextUser: SessionUser | null) => {
+    if (nextUser) {
+      const token = nextUser.token || "";
+      writeSession(token, nextUser, nextUser.application_password);
+      setUserState(readStoredUser());
+      return;
+    }
 
-  // Also set cookie for middleware
-  const days = rememberMe ? 30 : 1;
-  const expires = new Date();
-  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-  document.cookie = `lux_auth_token=${token};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+    clearStoredSession();
+    setUserState(null);
+  };
 
-  window.dispatchEvent(new Event('authStateChanged'));
-};
+  const login = (token: string, userData: SessionUser, rememberMe = false, appPassword?: string) => {
+    void rememberMe;
+    writeSession(token, userData, appPassword);
+    setUserState(readStoredUser());
+  };
 
-const logout = () => {
-  setUser(null);
-  
-  localStorage.removeItem("user");
-  localStorage.removeItem("lux_user");
-  localStorage.removeItem("lux_token");
-  localStorage.removeItem("lux_app_password");
-  
-  // Clear cookies
-  document.cookie = 'user_info=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  document.cookie = 'lux_auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  const logout = async () => {
+    setUserState(null);
+    clearStoredSession();
+    await clearSessionAction();
+  };
 
-  window.dispatchEvent(new Event('authStateChanged'));
-};
-
-  const updateUser = (userData: Partial<User>) => {
+  const updateUser = (userData: Partial<SessionUser>) => {
     if (user) {
-      const updatedUser = { ...user, ...userData };
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      const updatedUser = updateStoredUser(userData);
+      setUserState(updatedUser);
     }
   };
 

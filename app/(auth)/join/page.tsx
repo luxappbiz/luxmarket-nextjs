@@ -8,10 +8,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Check, X, Loader2 } from 'lucide-react';
-import { authApi, tokenStorage } from '@/lib/api';
+import { authApi } from '@/lib/api';
+import { useUser } from '@/contexts/UserContext';
+import { loginAction } from '@/app/actions/auth';
 
 export default function JoinPage() {
     const router = useRouter();
+    const { login } = useUser();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -53,10 +56,17 @@ export default function JoinPage() {
         try {
             const response = await authApi.register(formData.email, formData.password);
             if (response.success) {
-                // Store token and user data
-                tokenStorage.setToken(response.token);
-                tokenStorage.setUser(response.user);
-                // Redirect to account page or show success message
+                await loginAction({
+                    token: response.token,
+                    user: response.user,
+                    appPassword: response.application_password,
+                });
+                login(
+                    response.token,
+                    response.user,
+                    false,
+                    response.application_password
+                );
                 router.push('/account');
             } else {
                 setError(response.error || 'Registration failed');

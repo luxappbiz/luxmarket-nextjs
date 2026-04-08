@@ -8,7 +8,7 @@ import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { authApi } from '@/lib/api';
 import { useUser } from '@/contexts/UserContext';
-import { setUser } from '@/app/actions/auth';
+import { loginAction } from '@/app/actions/auth';
 // import { useRouter } from 'next/router';
 
 const LoginForm = () => {
@@ -46,16 +46,17 @@ const LoginForm = () => {
       try {
           const response = await authApi.login(formData.login, formData.password);
           if (response.success) {
+              await loginAction({
+                  token: response.token,
+                  user: response.user,
+                  appPassword: response.application_password,
+              });
               login(
                   response.token,
                   response.user,
                   formData.rememberMe,
                   response.application_password
               );
-              // Save user to cookies
-              if (response.user) {
-                  await setUser(response.user);
-              }
               setFormData({ login: '', password: '', rememberMe: false });
               // router.push('/account');
               window.location.href = '/account';

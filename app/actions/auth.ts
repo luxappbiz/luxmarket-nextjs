@@ -1,122 +1,53 @@
 "use server";
-import { UserProps } from '@/types/user';
-import axios from 'axios';
-import { cookies } from "next/headers";
-import { redirect } from 'next/navigation';
+
+import {
+  clearSessionAction as clearSessionFromLib,
+  getCurrentUser as getCurrentUserFromLib,
+  getCurrentUserAuthToken as getCurrentUserAuthTokenFromLib,
+  getCurrentUserToken as getCurrentUserTokenFromLib,
+  getLuxUserAuth as getLuxUserAuthFromLib,
+  loginAction as loginActionFromLib,
+  logout as logoutFromLib,
+  setUser as setUserFromLib,
+} from "@/lib/auth";
+import { UserProps } from "@/types/user";
 
 export async function loginAction({
   token,
   user,
+  appPassword,
 }: {
   token: string;
-  user?: UserProps;  // Use UserProps instead of any or Record
+  user?: UserProps;
+  appPassword?: string;
 }) {
-  const cookieStore = await cookies();
-  // Set secure, HttpOnly auth_token
-  cookieStore.set("lux_auth_token", token, {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
-    secure: true,
-    httpOnly: true, // can't be read by JavaScript
-    sameSite: "lax",
-  });
-  // (Optional) If you need some safe client-accessible info
-  if (user) {
-    cookieStore.set("lux_user", JSON.stringify(user), {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30,
-      secure: true,
-      httpOnly: false, // accessible via JS
-      sameSite: "lax",
-    });
-  }
-  return { success: true };
+  return loginActionFromLib({ token, user, appPassword });
+}
+
+export async function clearSessionAction() {
+  return clearSessionFromLib();
 }
 
 export async function logout() {
-  const cookieStore = await cookies();
-  cookieStore.delete('lux_auth_token')
-  cookieStore.delete('lux_user')
-  return redirect('/login'); 
+  return logoutFromLib();
 }
 
-export async function getCurrentUser(): Promise<UserProps> {
-  const cookieStore = await cookies();
-  const user = cookieStore.get('lux_user')?.value || '{}';
-  return JSON.parse(user) as UserProps;
+export async function getCurrentUser() {
+  return getCurrentUserFromLib();
 }
 
 export async function setUser(user: UserProps) {
-  const cookieStore = await cookies();
-  cookieStore.set("lux_user", JSON.stringify(user), {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 30,
-    secure: true,
-    httpOnly: false, // accessible via JS
-    sameSite: "lax",
-  });
+  return setUserFromLib(user);
 }
 
-export async function getCurrentUserToken(): Promise<string | undefined> {
-  const cookieStore = await cookies();
-  return cookieStore.get("lux_auth_token")?.value;
+export async function getCurrentUserToken() {
+  return getCurrentUserTokenFromLib();
 }
 
-export async function getCurrentUserAuthToken(): Promise<string|null> {
-  const authToken = await getCurrentUserToken();
-  const user = await getCurrentUser();
-
-  // Provide fallback empty string if user_login or authToken is undefined
-  const userLogin = user?.user_login || "";
-  const token = authToken || "";
-  if (!userLogin && !token) {
-    return null
-  }
-  return btoa(`${userLogin}:${token}`);
+export async function getCurrentUserAuthToken() {
+  return getCurrentUserAuthTokenFromLib();
 }
 
-export async function getUserAutoLoginToken() {
-  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/auto-login`;
-  try {
-    const _getCurrentUserAuthToken = await getCurrentUserAuthToken()
-    const res = await axios.post(apiUrl, null, {
-      headers: {
-        'Authorization': `Basic ${_getCurrentUserAuthToken}`,
-      },
-    });
-    return res.data
-  } catch (error) {
-    console.error('Error fetching auto-login token:', error);
-    return false;
-  }
+export async function getLuxUserAuth() {
+  return getLuxUserAuthFromLib();
 }
-
-export const updateUserProfileImage = async (previewImageFile: File|null) => {
-  if (!previewImageFile) {
-    return
-  }
-  const formData = new FormData();
-  formData.append("profile_image", previewImageFile);
-  try {
-    const _getCurrentUserAuthToken = await getCurrentUserAuthToken();
-    const res = await axios.post(
-      process.env.NEXT_PUBLIC_BASE_URL + '/wp-json/app/v1/user/',
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          'Authorization': 'Basic ' + _getCurrentUserAuthToken,
-        },
-      }
-    );
-    if (res.data && res.data.success && res.data.user_data && res.data.user_data.profile_avatar_url) {
-      const user = await getCurrentUser();
-      user.image = res.data.user_data.profile_avatar_url[0]
-      await setUser(user)
-    }
-    return res.data
-  } catch (err) {
-    console.error(err)
-    return err
-  }
-};
