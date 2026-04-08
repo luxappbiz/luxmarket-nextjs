@@ -38,11 +38,6 @@ export function CheckoutForm() {
     const enabledPaymentMethods = config.enabledPaymentMethods || ['stripe', 'cod'];
     const isSubscription = isSubscriptionOrder();
 
-    // console.log("subscription yes or no",isSubscription)
-    // console.log(requiresLogin())
-
-
-
     const handleInputChange = (field: keyof CheckoutFormData, value: string | boolean) => {
         updateFormData({ [field]: value });
 

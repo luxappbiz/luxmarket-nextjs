@@ -23,7 +23,6 @@ export default function Memberships() {
       if (!user) {
         return;
       }
-      console.log("Fetching membership data...");
       setLoading(true);
       setError("");
       try {
@@ -36,8 +35,6 @@ export default function Memberships() {
             },
           }
         );
-        console.log("User", user.ID);
-        console.log("Membership response:", response.data);
         setMembership(response.data.membership);
         setMembershipMessage(response.data.message || "");
         

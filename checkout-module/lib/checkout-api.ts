@@ -112,12 +112,6 @@ export class CheckoutAPI {
         if (this.userToken) {
           config.headers["X-Customer-Token"] = this.userToken;
         }
-
-        console.log(
-          "🛒 WooCommerce API Request:",
-          config.method?.toUpperCase(),
-          config.url
-        );
         return config;
       },
       (error) => {
@@ -128,14 +122,7 @@ export class CheckoutAPI {
 
     // Response interceptor
     this.client.interceptors.response.use(
-      (response) => {
-        console.log(
-          "🛒 WooCommerce API Response:",
-          response.status,
-          response.config.url
-        );
-        return response;
-      },
+      (response) => response,
       (error) => {
         console.error(
           "🛒 WooCommerce API Error:",

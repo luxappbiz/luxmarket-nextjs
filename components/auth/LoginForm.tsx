@@ -15,7 +15,6 @@ const LoginForm = () => {
   const { login, user } = useUser();
   // const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  // console.log('Current user in LoginForm:', user);
   // if (user) {
   //     return <></>;
   // }

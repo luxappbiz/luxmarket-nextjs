@@ -62,8 +62,6 @@ function CheckoutContent() {
   ];
 
   const handleCheckoutSuccess = (result: any) => {
-    console.log('Checkout successful:', result);
-    
     if (result.subscriptionId) {
       toast.success('Subscription created successfully!');
       

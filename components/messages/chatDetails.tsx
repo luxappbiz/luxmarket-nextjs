@@ -26,9 +26,6 @@ function ChatDetails({
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const router = useRouter()
 
-  console.log('currentUser', currentUser);
-  console.log('authToken', authToken);
-
   // Open the confirm dialog (keeps your button onClick the same name)
   const handleBlock = () => {
     if (!selectedConversation) return;
@@ -91,12 +88,11 @@ function ChatDetails({
     if (!confirmed) return;
     try {
       const url = `${process.env.NEXT_PUBLIC_BASE_URL}/wp-json/lux/v1/conversations/${conversationId}`;
-      const response = await axios.delete(url, {
+      await axios.delete(url, {
         headers: {
           Authorization: `Basic ${authToken}`
         },
       });
-      console.log('Delete success:', response.data);
       window.location.reload();
     } catch (e) {
       console.error('Delete error:', e);

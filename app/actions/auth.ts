@@ -84,11 +84,9 @@ export async function getUserAutoLoginToken() {
         'Authorization': `Basic ${_getCurrentUserAuthToken}`,
       },
     });
-    console.log('Auto-login token response:', res.data);
     return res.data
   } catch (error) {
-    console.log('Error fetching auto-login token:');
-    console.log(error);
+    console.error('Error fetching auto-login token:', error);
     return false;
   }
 }
@@ -116,10 +114,9 @@ export const updateUserProfileImage = async (previewImageFile: File|null) => {
       user.image = res.data.user_data.profile_avatar_url[0]
       await setUser(user)
     }
-    console.log(res.data)
     return res.data
   } catch (err) {
-    console.log(err)
+    console.error(err)
     return err
   }
 };

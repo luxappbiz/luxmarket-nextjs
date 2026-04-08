@@ -7,7 +7,6 @@ import { StripePaymentForm } from './StripePaymentForm';
 
 export function PaymentForm() {
     const { state } = useCheckout();
-    console.log('PaymentForm state:', state);
     const renderPaymentMethod = () => {
         if (state.formData.payment_method === 'stripe' && state.paymentData.stripeClientSecret) {
             return (

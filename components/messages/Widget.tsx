@@ -27,7 +27,6 @@ interface CacheData {
 }
 
 export default function MessagesWidget({ user, authToken }: MessagesWidgetProps) {
-  console.log("user", user);
   const [isOpen, setIsOpen] = useState(false);
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [loading, setLoading] = useState(false);

@@ -91,8 +91,6 @@ export default function MessageBubble({ authToken, message, currentUserID, recip
   };
 
   const handleDelete = async () => {
-    console.log("Delete clicked:", message.id);
-
     try {
       const response = await fetch(
         `https://api.luxclub.com/wp-json/lux/v1/conversations/${message.conversation_id}/messages/${message.id}`,
@@ -105,7 +103,6 @@ export default function MessageBubble({ authToken, message, currentUserID, recip
       );
 
       if (response.ok) {
-        console.log("Delete success");
         if (onDelete) onDelete(message.id); // ✅ notify parent to update state
       } else {
         console.error("Delete failed", response.status);

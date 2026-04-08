@@ -37,7 +37,6 @@ export default function LostPasswordPage() {
             }
         } catch (err: any) {
             // For now, simulate success since the endpoint might not exist
-            console.log('Password reset requested for:', email);
             setIsSubmitted(true);
         } finally {
             setIsLoading(false);

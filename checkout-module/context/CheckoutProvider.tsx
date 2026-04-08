@@ -90,7 +90,6 @@ export function CheckoutProvider({ children, config, callbacks }: CheckoutProvid
       const savedUser = localStorage.getItem('lux_user');
       if (savedUser) {
         const user = JSON.parse(savedUser);
-        console.log('🔄 Loading saved user:', user);
 
         const checkoutUser: CheckoutUser = {
           id: user.ID || user.id,
@@ -119,7 +118,6 @@ export function CheckoutProvider({ children, config, callbacks }: CheckoutProvid
   // Auto-fill form data when user changes
   useEffect(() => {
     if (state.user) {
-      console.log('checkout user',state.user)
       const autoFillData: Partial<CheckoutFormData> = {
         email: state.user.email ||state.user.user_email || state.user.billing?.email || '',
         first_name: state.user.first_name || state.user.billing?.first_name || '',
@@ -259,8 +257,6 @@ export function CheckoutProvider({ children, config, callbacks }: CheckoutProvid
 
   //     const { total } = calculateTotals();
   //     const isSubscription = isSubscriptionOrder();
-
-  //     console.log('🛒 Processing order:', { isSubscription, total, user: state.user });
 
   //     const orderData = buildOrderData();
 
@@ -419,8 +415,6 @@ export function CheckoutProvider({ children, config, callbacks }: CheckoutProvid
       const { total } = calculateTotals();
       const isSubscription = isSubscriptionOrder();
 
-      console.log('🛒 Processing order:', { isSubscription, total, user: state.user });
-
       const orderData = buildOrderData();
 
       dispatch({
@@ -573,8 +567,6 @@ export function CheckoutProvider({ children, config, callbacks }: CheckoutProvid
       setLoading(true);
       const isSubscription = isSubscriptionOrder();
       const { total } = calculateTotals();
-
-      console.log('💳 Processing Stripe payment:', { clientSecret, isSubscription });
 
       const orderData = {
         ...buildOrderData(),

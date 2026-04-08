@@ -58,7 +58,6 @@ export default function SelectMemberDialog({ authToken, setSelectedUserIDToChat 
         },
       })
       .then((res) => {
-        console.log('Fetched members response', res.data);
         setMembers(Array.isArray(res.data) ? res.data : res.data.members || []);
       })
       .catch((err) => console.error('Failed to fetch members', err))
